@@ -1,22 +1,27 @@
 /* =====================================================
-   LIXERA STORE - MAIN JAVASCRIPT
-   Navigasi, Top Up, Joki, QRIS, WhatsApp
+   LIXERA STORE — SCRIPT.JS
+   Navigation • Slider • Top Up • Joki • QRIS • WhatsApp
 ===================================================== */
 
-/* ===================== KONFIGURASI ===================== */
+"use strict";
+
+
+/* =====================================================
+   1. KONFIGURASI
+===================================================== */
 
 const CONFIG = {
   adminWhatsApp: "628818238236",
   qrisImage: "qrislixera.png",
-  slideInterval: 5000,
-  loaderDuration: 4000
+  sliderInterval: 5000
 };
 
-/*
-  HARGA TOP UP
-  Silakan sesuaikan harga selain WDP dengan katalog final.
-  Harga Weekly Diamond Pass dipertahankan Rp32.500.
-*/
+
+/* =====================================================
+   2. KATALOG TOP UP
+   WDP Mobile Legends dipertahankan Rp32.500.
+   Harga lainnya merupakan harga contoh awal.
+===================================================== */
 
 const TOPUP_PRODUCTS = {
   mobilelegends: [
@@ -98,14 +103,10 @@ const TOPUP_PRODUCTS = {
   ]
 };
 
-/*
-  CATATAN:
-  Harga di atas selain Weekly Diamond Pass adalah contoh awal,
-  bukan hasil pengecekan harga market real-time.
-*/
 
-
-/* ===================== HARGA JOKI ===================== */
+/* =====================================================
+   3. HARGA JOKI PER BINTANG
+===================================================== */
 
 const JOKI_PRICES = {
   rank: {
@@ -131,46 +132,61 @@ const JOKI_PRICES = {
   }
 };
 
-const RANKS = [
-  "Grandmaster",
-  "Epic",
-  "Legend",
-  "Mythic",
-  "Honor",
-  "Glory",
-  "Immortal"
-];
+const GAME_NAMES = {
+  mobilelegends: "Mobile Legends",
+  freefire: "Free Fire",
+  pubgmobile: "PUBG Mobile",
+  honorofkings: "Honor of Kings",
+  fcmobile: "FC Mobile",
+  arenaofvalor: "Arena of Valor",
+  magicchessgogo: "Magic Chess: Go Go",
+  "football-dream-be-a-pro": "Football Dream: Be a Pro"
+};
 
 
-/* ===================== FUNGSI UMUM ===================== */
+/* =====================================================
+   4. STATE
+===================================================== */
 
-function formatRupiah(value) {
+let selectedGame = null;
+let selectedProduct = null;
+let selectedJokiType = "rank";
+let pendingOrder = null;
+let currentSlide = 0;
+let sliderTimer = null;
+
+
+/* =====================================================
+   5. HELPER FUNCTIONS
+===================================================== */
+
+function $(id) {
+  return document.getElementById(id);
+}
+
+function money(amount) {
   return new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
     maximumFractionDigits: 0
-  }).format(value);
+  }).format(amount);
 }
 
-function getElement(id) {
-  return document.getElementById(id);
-}
-
-function showElement(element) {
-  if (element) element.style.display = "";
-}
-
-function hideElement(element) {
-  if (element) element.style.display = "none";
+function valueOf(id) {
+  return String($(id)?.value ?? "").trim();
 }
 
 function setText(id, value) {
-  const element = getElement(id);
+  const element = $(id);
   if (element) element.textContent = value;
 }
 
-function safeText(value) {
-  return String(value ?? "").trim();
+function show(element) {
+  if (element) element.hidden = false;
+}
+
+function hide(element) {
+  if (element) element.hidden = true;
 }
 
 function escapeHTML(value) {
@@ -194,65 +210,63 @@ function openWhatsApp(message) {
 }
 
 
-/* ===================== LOADING SCREEN ===================== */
+/* =====================================================
+   6. START WEBSITE
+===================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
-  const loader = getElement("loader");
-
-  if (loader) {
-    setTimeout(() => {
-      loader.classList.add("hidden");
-
-      setTimeout(() => {
-        loader.style.display = "none";
-      }, 600);
-    }, CONFIG.loaderDuration);
-  }
-
   initializeNavigation();
   initializeSlider();
   initializeTopUp();
   initializeJoki();
   initializePayment();
+
+  setText("currentYear", new Date().getFullYear());
+
+  // Tidak ada loading screen.
+  // Halaman langsung tampil.
 });
 
 
-/* ===================== NAVIGASI HALAMAN ===================== */
+/* =====================================================
+   7. NAVIGASI HALAMAN
+===================================================== */
 
 function initializeNavigation() {
   document.querySelectorAll("[data-go]").forEach(button => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", event => {
+      event.preventDefault();
+
       navigateTo(button.dataset.go);
-    });
-  });
 
-  const backButtons = document.querySelectorAll("[data-back]");
-
-  backButtons.forEach(button => {
-    button.addEventListener("click", () => {
-      navigateTo(button.dataset.back || "home");
+      // Tombol game di halaman utama sekaligus memilih game.
+      if (button.dataset.game) {
+        selectGame(button.dataset.game);
+      }
     });
   });
 }
 
 function navigateTo(pageName) {
-  const pageIds = {
+  const pageMap = {
     home: "page-home",
     topup: "page-topup",
     joki: "page-joki"
   };
 
+  const targetId = pageMap[pageName];
+
+  if (!targetId) return;
+
   document.querySelectorAll(".page").forEach(page => {
     page.classList.remove("active");
   });
 
-  const target = getElement(pageIds[pageName]);
+  const target = $(targetId);
 
-  if (target) {
-    target.classList.add("active");
-  }
+  if (target) target.classList.add("active");
 
-  document.querySelectorAll("[data-go]").forEach(button => {
+  document.querySelectorAll(".nav-link[data-go]").forEach(button => {
     button.classList.toggle(
       "active",
       button.dataset.go === pageName
@@ -266,15 +280,15 @@ function navigateTo(pageName) {
 }
 
 
-/* ===================== SLIDER BANNER ===================== */
+/* =====================================================
+   8. HERO SLIDER
+===================================================== */
 
 function initializeSlider() {
   const slides = Array.from(document.querySelectorAll(".slide"));
   const dots = Array.from(document.querySelectorAll(".slider-dot"));
 
   if (!slides.length) return;
-
-  let currentSlide = 0;
 
   function showSlide(index) {
     currentSlide = (index + slides.length) % slides.length;
@@ -289,114 +303,117 @@ function initializeSlider() {
   }
 
   dots.forEach((dot, index) => {
-    dot.addEventListener("click", () => showSlide(index));
+    dot.addEventListener("click", () => {
+      showSlide(index);
+      restartSlider();
+    });
   });
 
-  const previous = getElement("prevSlide");
-  const next = getElement("nextSlide");
+  $("prevSlide")?.addEventListener("click", () => {
+    showSlide(currentSlide - 1);
+    restartSlider();
+  });
 
-  if (previous) {
-    previous.addEventListener("click", () => {
-      showSlide(currentSlide - 1);
-    });
+  $("nextSlide")?.addEventListener("click", () => {
+    showSlide(currentSlide + 1);
+    restartSlider();
+  });
+
+  function startSlider() {
+    clearInterval(sliderTimer);
+
+    sliderTimer = setInterval(() => {
+      showSlide(currentSlide + 1);
+    }, CONFIG.sliderInterval);
   }
 
-  if (next) {
-    next.addEventListener("click", () => {
-      showSlide(currentSlide + 1);
-    });
+  function restartSlider() {
+    startSlider();
   }
 
   showSlide(0);
-
-  setInterval(() => {
-    showSlide(currentSlide + 1);
-  }, CONFIG.slideInterval);
+  startSlider();
 }
 
 
-/* ===================== TOP UP GAME ===================== */
-
-let selectedGame = "";
-let selectedProduct = null;
-
-const GAME_NAMES = {
-  mobilelegends: "Mobile Legends",
-  freefire: "Free Fire",
-  pubgmobile: "PUBG Mobile",
-  honorofkings: "Honor of Kings",
-  fcmobile: "FC Mobile",
-  arenaofvalor: "Arena of Valor",
-  magicchessgogo: "Magic Chess: Go Go",
-  "football-dream-be-a-pro": "Football Dream: Be a Pro"
-};
+/* =====================================================
+   9. TOP UP
+===================================================== */
 
 function initializeTopUp() {
-  document.querySelectorAll("[data-game]").forEach(button => {
+  document.querySelectorAll(".game-card[data-game]").forEach(button => {
     button.addEventListener("click", () => {
       selectGame(button.dataset.game);
     });
   });
 
-  const changeGameButton = getElement("changeGame");
-
-  if (changeGameButton) {
-    changeGameButton.addEventListener("click", () => {
-      selectedGame = "";
-      selectedProduct = null;
-
-      hideElement(getElement("topupCatalog"));
-      showElement(getElement("gameGrid"));
-
-      const form = getElement("topupForm");
-      if (form) form.reset();
+  document.querySelectorAll(".popular-game[data-game]").forEach(button => {
+    button.addEventListener("click", () => {
+      navigateTo("topup");
+      selectGame(button.dataset.game);
     });
-  }
+  });
 
-  const form = getElement("topupForm");
+  $("changeGame")?.addEventListener("click", () => {
+    selectedGame = null;
+    selectedProduct = null;
 
-  if (form) {
-    form.addEventListener("submit", event => {
-      event.preventDefault();
-      submitTopUpOrder();
+    show($("gameGrid"));
+    hide($("topupCatalog"));
+
+    $("topupForm")?.reset();
+
+    setText("selectedProductLabel", "Belum memilih produk");
+    setText("topupTotal", money(0));
+
+    $("gameGrid")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
     });
-  }
+  });
+
+  $("topupForm")?.addEventListener("submit", event => {
+    event.preventDefault();
+    submitTopUp();
+  });
 }
 
 function selectGame(gameKey) {
   if (!TOPUP_PRODUCTS[gameKey]) {
-    alert("Katalog game ini belum tersedia.");
+    alert("Katalog untuk game ini belum tersedia.");
     return;
   }
 
   selectedGame = gameKey;
   selectedProduct = null;
 
-  setText("selectedGameTitle", GAME_NAMES[gameKey] || gameKey);
+  navigateTo("topup");
 
-  hideElement(getElement("gameGrid"));
-  showElement(getElement("topupCatalog"));
-
-  renderTopUpProducts(gameKey);
-  renderGameFields(gameKey);
+  setText(
+    "selectedGameTitle",
+    GAME_NAMES[gameKey] || gameKey
+  );
 
   setText("selectedProductLabel", "Belum memilih produk");
-  setText("topupTotal", formatRupiah(0));
+  setText("topupTotal", money(0));
 
-  const form = getElement("topupForm");
-  if (form) form.reset();
+  $("topupForm")?.reset();
 
-  const catalog = getElement("topupCatalog");
-  if (catalog) {
-    catalog.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-  }
+  renderProducts(gameKey);
+  renderGameFields(gameKey);
+
+  hide($("gameGrid"));
+  show($("topupCatalog"));
+
+  $("topupCatalog")?.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
 }
 
-function renderTopUpProducts(gameKey) {
-  const container = getElement("topupProducts");
+function renderProducts(gameKey) {
+  const container = $("topupProducts");
+
   if (!container) return;
 
   const products = TOPUP_PRODUCTS[gameKey] || [];
@@ -411,117 +428,184 @@ function renderTopUpProducts(gameKey) {
       <span class="product-name">
         ${escapeHTML(product.name)}
       </span>
+
       <strong class="product-price">
-        ${formatRupiah(product.price)}
+        ${money(product.price)}
       </strong>
     </button>
   `).join("");
 
   container.querySelectorAll("[data-product-index]").forEach(button => {
     button.addEventListener("click", () => {
-      const index = Number(button.dataset.productIndex);
-      chooseTopUpProduct(index);
+      chooseProduct(Number(button.dataset.productIndex));
     });
   });
 }
 
-function chooseTopUpProduct(index) {
+function chooseProduct(index) {
   const products = TOPUP_PRODUCTS[selectedGame] || [];
-  selectedProduct = products[index];
+  const product = products[index];
 
-  if (!selectedProduct) return;
+  if (!product) return;
 
-  const container = getElement("topupProducts");
+  selectedProduct = product;
 
-  if (container) {
-    container.querySelectorAll("[data-product-index]").forEach(button => {
-      const isSelected =
-        Number(button.dataset.productIndex) === index;
+  document.querySelectorAll("#topupProducts .product-card").forEach(button => {
+    const active = Number(button.dataset.productIndex) === index;
 
-      button.classList.toggle("selected", isSelected);
-      button.setAttribute("aria-pressed", String(isSelected));
-    });
-  }
+    button.classList.toggle("selected", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
 
-  setText("selectedProductLabel", selectedProduct.name);
-  setText("topupTotal", formatRupiah(selectedProduct.price));
+  setText("selectedProductLabel", product.name);
+  setText("topupTotal", money(product.price));
 }
 
 function renderGameFields(gameKey) {
-  const container = getElement("gameFields");
+  const container = $("gameFields");
+
   if (!container) return;
 
   const fields = {
     mobilelegends: [
-      { name: "ID Game", id: "gameId", placeholder: "Masukkan ID Mobile Legends" },
-      { name: "Server", id: "gameServer", placeholder: "Contoh: 1234" },
-      { name: "Nickname", id: "gameNickname", placeholder: "Masukkan nickname" }
+      {
+        label: "ID Mobile Legends",
+        id: "gameId",
+        placeholder: "Masukkan ID game"
+      },
+      {
+        label: "Server",
+        id: "gameServer",
+        placeholder: "Contoh: 1234"
+      },
+      {
+        label: "Nickname",
+        id: "gameNickname",
+        placeholder: "Masukkan nickname"
+      }
     ],
 
     freefire: [
-      { name: "ID Game", id: "gameId", placeholder: "Masukkan ID Free Fire" },
-      { name: "Nickname", id: "gameNickname", placeholder: "Masukkan nickname" }
+      {
+        label: "ID Free Fire",
+        id: "gameId",
+        placeholder: "Masukkan ID game"
+      },
+      {
+        label: "Nickname",
+        id: "gameNickname",
+        placeholder: "Masukkan nickname"
+      }
     ],
 
     pubgmobile: [
-      { name: "ID Game", id: "gameId", placeholder: "Masukkan Character ID PUBG" },
-      { name: "Nickname", id: "gameNickname", placeholder: "Masukkan nickname" }
+      {
+        label: "Character ID PUBG",
+        id: "gameId",
+        placeholder: "Masukkan Character ID"
+      },
+      {
+        label: "Nickname",
+        id: "gameNickname",
+        placeholder: "Masukkan nickname"
+      }
     ],
 
     honorofkings: [
-      { name: "ID Game", id: "gameId", placeholder: "Masukkan ID Honor of Kings" },
-      { name: "Nickname", id: "gameNickname", placeholder: "Masukkan nickname" }
+      {
+        label: "ID Honor of Kings",
+        id: "gameId",
+        placeholder: "Masukkan ID game"
+      },
+      {
+        label: "Nickname",
+        id: "gameNickname",
+        placeholder: "Masukkan nickname"
+      }
     ],
 
     fcmobile: [
-      { name: "User ID", id: "gameId", placeholder: "Masukkan User ID" },
-      { name: "Nickname", id: "gameNickname", placeholder: "Masukkan nickname" }
+      {
+        label: "User ID FC Mobile",
+        id: "gameId",
+        placeholder: "Masukkan User ID"
+      },
+      {
+        label: "Nickname",
+        id: "gameNickname",
+        placeholder: "Masukkan nickname"
+      }
     ],
 
     arenaofvalor: [
-      { name: "ID Game", id: "gameId", placeholder: "Masukkan ID Arena of Valor" },
-      { name: "Nickname", id: "gameNickname", placeholder: "Masukkan nickname" }
+      {
+        label: "ID Arena of Valor",
+        id: "gameId",
+        placeholder: "Masukkan ID game"
+      },
+      {
+        label: "Nickname",
+        id: "gameNickname",
+        placeholder: "Masukkan nickname"
+      }
     ],
 
     magicchessgogo: [
-      { name: "ID Game", id: "gameId", placeholder: "Masukkan ID game" },
-      { name: "Nickname", id: "gameNickname", placeholder: "Masukkan nickname" }
+      {
+        label: "ID Magic Chess",
+        id: "gameId",
+        placeholder: "Masukkan ID game"
+      },
+      {
+        label: "Nickname",
+        id: "gameNickname",
+        placeholder: "Masukkan nickname"
+      }
     ],
 
     "football-dream-be-a-pro": [
-      { name: "ID Game", id: "gameId", placeholder: "Masukkan ID game" },
-      { name: "Nickname", id: "gameNickname", placeholder: "Masukkan nickname" }
+      {
+        label: "ID Pemain",
+        id: "gameId",
+        placeholder: "Masukkan ID pemain"
+      },
+      {
+        label: "Nickname",
+        id: "gameNickname",
+        placeholder: "Masukkan nickname"
+      }
     ]
   };
 
   container.innerHTML = (fields[gameKey] || []).map(field => `
     <label class="form-group">
-      <span>${escapeHTML(field.name)}</span>
+      <span>${escapeHTML(field.label)}</span>
+
       <input
         type="text"
         id="${field.id}"
         name="${field.id}"
         placeholder="${escapeHTML(field.placeholder)}"
-        required
         autocomplete="off"
+        required
       >
     </label>
   `).join("");
 }
 
-function submitTopUpOrder() {
+function submitTopUp() {
   if (!selectedGame || !selectedProduct) {
     alert("Pilih game dan nominal top up terlebih dahulu.");
     return;
   }
 
-  const gameId = safeText(getElement("gameId")?.value);
-  const gameServer = safeText(getElement("gameServer")?.value);
-  const nickname = safeText(getElement("gameNickname")?.value);
-  const customerName = safeText(getElement("topupName")?.value);
+  const customerName = valueOf("topupName");
+  const gameId = valueOf("gameId");
+  const gameServer = valueOf("gameServer");
+  const nickname = valueOf("gameNickname");
 
   if (!customerName || !gameId || !nickname) {
-    alert("Lengkapi nama pemesan, ID game, dan nickname.");
+    alert("Lengkapi semua data pesanan.");
     return;
   }
 
@@ -531,264 +615,262 @@ function submitTopUpOrder() {
   }
 
   pendingOrder = {
-    type: "TOP UP",
+    type: "TOP UP GAME",
     game: GAME_NAMES[selectedGame],
     product: selectedProduct.name,
     price: selectedProduct.price,
     customerName,
     details: {
       "ID Game": gameId,
-      ...(gameServer ? { "Server": gameServer } : {}),
-      "Nickname": nickname
+      ...(gameServer ? { Server: gameServer } : {}),
+      Nickname: nickname
     }
   };
 
-  openPaymentModal(pendingOrder);
+  openPayment();
 }
 
 
-/* ===================== JOKI ===================== */
-
-let selectedJokiType = "rank";
-let pendingOrder = null;
+/* =====================================================
+   10. JOKI
+===================================================== */
 
 function initializeJoki() {
   document.querySelectorAll("[data-joki]").forEach(button => {
     button.addEventListener("click", () => {
-      openJokiService(button.dataset.joki);
+      openJoki(button.dataset.joki);
     });
   });
 
-  const rankForm = getElement("jokiForm");
+  $("jokiForm")?.addEventListener("submit", event => {
+    event.preventDefault();
+    submitJokiRank();
+  });
 
-  if (rankForm) {
-    rankForm.addEventListener("submit", event => {
-      event.preventDefault();
-      submitJokiRank();
-    });
-  }
-
-  const gendongForm = getElement("jokiGendongForm");
-
-  if (gendongForm) {
-    gendongForm.addEventListener("submit", event => {
-      event.preventDefault();
-      submitJokiGendong();
-    });
-  }
+  $("jokiGendongForm")?.addEventListener("submit", event => {
+    event.preventDefault();
+    submitJokiGendong();
+  });
 
   initializeRankCalculator();
 }
 
-function openJokiService(type) {
+function openJoki(type) {
   selectedJokiType = type === "gendong" ? "gendong" : "rank";
 
-  const detail = getElement("jokiDetail");
-  if (detail) showElement(detail);
+  show($("jokiDetail"));
 
-  const rankFields = getElement("jokiRankFields");
-  const gendongFields = getElement("jokiGendongFields");
+  const rankForm = $("jokiForm");
+  const gendongForm = $("jokiGendongForm");
 
   if (selectedJokiType === "rank") {
-    showElement(rankFields);
-    hideElement(gendongFields);
+    show(rankForm);
+    hide(gendongForm);
 
     setText("jokiServiceTitle", "JOKI RANK");
+    setText("jokiPriceType", "Joki Rank");
 
-    const banner = getElement("jokiBannerImage");
-    if (banner) banner.src = "bannerjokirank.png";
+    if ($("jokiBannerImage")) {
+      $("jokiBannerImage").src = "bannerjokirank.png";
+    }
   } else {
-    hideElement(rankFields);
-    showElement(gendongFields);
+    hide(rankForm);
+    show(gendongForm);
 
     setText("jokiServiceTitle", "JOKI GENDONG");
+    setText("jokiPriceType", "Joki Gendong");
 
-    const banner = getElement("jokiBannerImage");
-    if (banner) banner.src = "bannerjokigendong.png";
+    if ($("jokiBannerImage")) {
+      $("jokiBannerImage").src = "bannerjokigendong.png";
+    }
   }
 
-  const element = getElement("jokiDetail");
-
-  if (element) {
-    element.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-  }
-
+  updateRankInputs();
   calculateJokiPrice();
+
+  $("jokiDetail")?.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
 }
 
+
+/* =====================================================
+   11. KALKULATOR RANK
+===================================================== */
+
+/*
+  GM, Epic, Legend:
+  Tiap rank memiliki tier V, IV, III, II, I.
+  Setiap tier berisi 0–5 bintang.
+
+  Mythic: 0–24 bintang.
+  Honor: 25–49 bintang.
+  Glory: 50–99 bintang.
+  Immortal: 100+ bintang.
+
+  Harga dihitung berdasarkan setiap bintang yang dilewati.
+*/
+
+const RANK_ORDER = [
+  "Grandmaster",
+  "Epic",
+  "Legend",
+  "Mythic",
+  "Honor",
+  "Glory",
+  "Immortal"
+];
+
+const TIER_ORDER = ["V", "IV", "III", "II", "I"];
+
 function initializeRankCalculator() {
-  const calculatorIds = [
+  [
     "startRank",
     "startTier",
     "startStars",
     "endRank",
     "endTier",
     "endStars"
-  ];
+  ].forEach(id => {
+    $(id)?.addEventListener("change", () => {
+      updateRankInputs();
+      calculateJokiPrice();
+    });
 
-  calculatorIds.forEach(id => {
-    const element = getElement(id);
-
-    if (element) {
-      element.addEventListener("change", calculateJokiPrice);
-      element.addEventListener("input", calculateJokiPrice);
-    }
+    $(id)?.addEventListener("input", calculateJokiPrice);
   });
 
   document.querySelectorAll("[data-counter]").forEach(button => {
     button.addEventListener("click", () => {
-      const targetId = button.dataset.counter;
-      const amount = Number(button.dataset.amount || 0);
-      const input = getElement(targetId);
+      const input = $(button.dataset.counter);
 
       if (!input) return;
 
+      const amount = Number(button.dataset.amount || 0);
       const min = Number(input.min || 0);
       const max = Number(input.max || 1000000);
       const current = Number(input.value || 0);
 
-      input.value = Math.max(min, Math.min(max, current + amount));
+      input.value = Math.max(
+        min,
+        Math.min(max, current + amount)
+      );
 
       calculateJokiPrice();
     });
   });
 
+  updateRankInputs();
   calculateJokiPrice();
 }
 
-/*
-  Sistem bintang:
-  GM / Epic / Legend:
-    Tier V = 0-5 bintang, lalu IV, III, II, I.
-  Mythic = 0-24 bintang.
-  Honor = 25-49 bintang.
-  Glory = 50-99 bintang.
-  Immortal = 100 bintang ke atas.
+function updateRankInputs() {
+  ["start", "end"].forEach(prefix => {
+    const rank = valueOf(prefix + "Rank");
+    const tierGroup = $(prefix + "TierGroup");
+    const tierInput = $(prefix + "Tier");
+    const starsInput = $(prefix + "Stars");
 
-  Harga dihitung per bintang pada setiap rank yang dilewati.
-*/
+    const usesTier = [
+      "Grandmaster",
+      "Epic",
+      "Legend"
+    ].includes(rank);
 
-function getRankPosition(rank, tier, stars) {
-  const tierOrder = {
-    V: 0,
-    IV: 1,
-    III: 2,
-    II: 3,
-    I: 4
-  };
+    if (tierGroup) {
+      tierGroup.hidden = !usesTier;
+    }
+
+    if (tierInput) {
+      tierInput.disabled = !usesTier;
+    }
+
+    if (starsInput) {
+      if (rank === "Mythic") {
+        starsInput.min = 0;
+        starsInput.max = 24;
+      } else if (rank === "Honor") {
+        starsInput.min = 25;
+        starsInput.max = 49;
+      } else if (rank === "Glory") {
+        starsInput.min = 50;
+        starsInput.max = 99;
+      } else if (rank === "Immortal") {
+        starsInput.min = 100;
+        starsInput.max = 1000000;
+      } else {
+        starsInput.min = 0;
+        starsInput.max = 5;
+      }
+
+      const current = Number(starsInput.value || 0);
+
+      if (current < Number(starsInput.min)) {
+        starsInput.value = starsInput.min;
+      }
+
+      if (current > Number(starsInput.max)) {
+        starsInput.value = starsInput.max;
+      }
+    }
+  });
+}
+
+function getRankScore(prefix) {
+  const rank = valueOf(prefix + "Rank");
+  const tier = valueOf(prefix + "Tier") || "V";
+  const stars = Math.max(
+    0,
+    Number(valueOf(prefix + "Stars")) || 0
+  );
 
   if (["Grandmaster", "Epic", "Legend"].includes(rank)) {
-    const validTier = tierOrder[tier] ?? 0;
-    const validStars = Math.max(0, Math.min(5, Number(stars) || 0));
+    const rankIndex = RANK_ORDER.indexOf(rank);
+    const tierIndex = TIER_ORDER.indexOf(tier);
 
-    const rankIndex = RANKS.indexOf(rank);
-
-    return rankIndex * 25 + validTier * 5 + validStars;
+    return (
+      rankIndex * 25 +
+      Math.max(0, tierIndex) * 5 +
+      Math.min(stars, 5)
+    );
   }
 
-  const value = Math.max(0, Number(stars) || 0);
+  if (rank === "Mythic") {
+    return 75 + Math.min(stars, 24);
+  }
 
-  if (rank === "Mythic") return 75 + Math.min(value, 24);
-  if (rank === "Honor") return 100 + Math.max(0, Math.min(value - 25, 24));
-  if (rank === "Glory") return 125 + Math.max(0, Math.min(value - 50, 49));
-  if (rank === "Immortal") return 175 + Math.max(0, value - 100);
+  if (rank === "Honor") {
+    return 100 + Math.max(0, Math.min(stars - 25, 24));
+  }
+
+  if (rank === "Glory") {
+    return 125 + Math.max(0, Math.min(stars - 50, 49));
+  }
+
+  if (rank === "Immortal") {
+    return 175 + Math.max(0, stars - 100);
+  }
 
   return 0;
 }
 
-function getRankNameByPosition(position) {
-  if (position < 25) return "Grandmaster";
-  if (position < 50) return "Epic";
-  if (position < 75) return "Legend";
-  if (position < 100) return "Mythic";
-  if (position < 125) return "Honor";
-  if (position < 175) return "Glory";
+function rankAtScore(score) {
+  if (score < 25) return "Grandmaster";
+  if (score < 50) return "Epic";
+  if (score < 75) return "Legend";
+  if (score < 100) return "Mythic";
+  if (score < 125) return "Honor";
+  if (score < 175) return "Glory";
+
   return "Immortal";
 }
 
 function calculateJokiPrice() {
-  const startRank = getElement("startRank");
-  const endRank = getElement("endRank");
+  if (!$("startRank") || !$("endRank")) return 0;
 
-  if (!startRank || !endRank) return;
+  const startScore = getRankScore("start");
+  const endScore = getRankScore("end");
 
-  const startPosition = getRankPosition(
-    startRank.value,
-    getElement("startTier")?.value || "V",
-    getElement("startStars")?.value || 0
-  );
-
-  const endPosition = getRankPosition(
-    endRank.value,
-    getElement("endTier")?.value || "V",
-    getElement("endStars")?.value || 0
-  );
-
-  const priceList = JOKI_PRICES[selectedJokiType] || JOKI_PRICES.rank;
-
-  if (endPosition <= startPosition) {
-    setText("jokiTotal", formatRupiah(0));
-    setText("jokiPriceNote", "Rank tujuan harus lebih tinggi dari rank awal.");
-    return;
-  }
-
-  let total = 0;
-
-  for (let position = startPosition + 1; position <= endPosition; position++) {
-    const rank = getRankNameByPosition(position);
-    total += priceList[rank] || 0;
-  }
-
-  setText("jokiTotal", formatRupiah(total));
-  setText(
-    "jokiPriceNote",
-    `Estimasi ${endPosition - startPosition} langkah bintang. Harga mengikuti tarif rank yang dilewati.`
-  );
-
-  return total;
-}
-
-function submitJokiRank() {
-  const name = safeText(getElement("jokiName")?.value);
-  const whatsapp = safeText(getElement("jokiWhatsapp")?.value);
-  const request = safeText(getElement("jokiRequest")?.value);
-
-  const total = calculateJokiPrice();
-
-  if (!name || !whatsapp) {
-    alert("Isi nama pemesan dan nomor WhatsApp.");
-    return;
-  }
-
-  if (!total || total <= 0) {
-    alert("Periksa rank awal dan rank tujuan.");
-    return;
-  }
-
-  pendingOrder = {
-    type: "JOKI RANK",
-    product: `${getElement("startRank")?.value} ke ${getElement("endRank")?.value}`,
-    price: total,
-    customerName: name,
-    details: {
-      "No. WhatsApp": whatsapp,
-      "Rank Awal": getElement("startRank")?.value,
-      "Tier Awal": getElement("startTier")?.value || "-",
-      "Bintang Awal": getElement("startStars")?.value || "0",
-      "Rank Tujuan": getElement("endRank")?.value,
-      "Tier Tujuan": getElement("endTier")?.value || "-",
-      "Bintang Tujuan": getElement("endStars")?.value || "0",
-      "Request": request || "-"
-    }
-  };
-
-  openPaymentModal(pendingOrder);
-}
-
-function submitJokiGendong() {
-  const name = safeText(getElement("gendongName")?.value);
-  const mlId = safeText(getElement("mlId")?.value);
-  const mlNick = safeText(getElement("ml
+  if (endScore <= startScore) {
+    setText("jokiTotal", mon
