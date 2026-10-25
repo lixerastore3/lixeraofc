@@ -1,1 +1,289 @@
+<!doctype html>
 
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07142e">
+  <title>LIXERA STORE</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>  <!-- LOADING SCREEN 4 DETIK -->  <div id="loader" class="loader">
+    <img src="LogoL.jpg" alt="LIXERA"
+         onerror="this.style.display='none'">
+    <h1>LIXERA <span>STORE</span></h1>
+    <div class="loadbar"><i></i></div>
+    <small>MENYIAPKAN STORE...</small>
+  </div>  <!-- HEADER -->  <header>
+    <button class="brand" data-page="home">
+      <img src="LogoL.jpg" alt="Logo LIXERA"
+           onerror="this.style.display='none'">
+      LIXERA <b>STORE</b>
+    </button>
+    <button data-page="home" class="home-btn">BERANDA</button>
+  </header>  <main><!-- HALAMAN UTAMA -->
+<section class="page active" id="page-home">
+
+  <div class="slider">
+    <img class="slide active" src="bannerhalaman1.png" alt="Banner 1">
+    <img class="slide" src="bannerhalaman2.png" alt="Banner 2">
+    <img class="slide" src="bannerhalaman3.png" alt="Banner 3">
+
+    <button class="arrow prev" aria-label="Banner sebelumnya">‹</button>
+    <button class="arrow next" aria-label="Banner berikutnya">›</button>
+
+    <div class="dots">
+      <button class="dot active" aria-label="Banner 1"></button>
+      <button class="dot" aria-label="Banner 2"></button>
+      <button class="dot" aria-label="Banner 3"></button>
+    </div>
+  </div>
+
+  <div class="intro">
+    <small>PILIH LAYANAN</small>
+    <h1>TOP UP GAME &amp; <span>JOKI SERVICE</span></h1>
+    <p>Satu tempat untuk kebutuhan game kamu.</p>
+  </div>
+
+  <div class="main-cats">
+
+    <button class="main-card" data-page="topup">
+      <div class="art">
+        <b>TOP<br>UP</b>
+      </div>
+      <div>
+        <small>DIAMOND &amp; CURRENCY</small>
+        <h2>TOP UP GAME</h2>
+        <p>Pilih game dan nominal yang kamu inginkan.</p>
+        <strong>BUKA KATALOG ↗</strong>
+      </div>
+    </button>
+
+    <button class="main-card" data-page="joki">
+      <div class="art purple">
+        <b>JOKI<br>GAME</b>
+      </div>
+      <div>
+        <small>RANK PUSH &amp; MABAR</small>
+        <h2>JOKI SERVICE</h2>
+        <p>Pilih Joki Rank atau Joki Gendong.</p>
+        <strong>LIHAT LAYANAN ↗</strong>
+      </div>
+    </button>
+
+  </div>
+
+  <footer>
+    © <span class="year"></span> LIXERA STORE · DIGITAL GAME STORE
+  </footer>
+</section>
+
+<!-- HALAMAN TOP UP -->
+<section class="page" id="page-topup">
+
+  <button class="back" data-page="home">
+    ← Kembali ke beranda
+  </button>
+
+  <div class="section-banner">
+    <div>
+      <small>LIXERA STORE</small>
+      <h1>TOP UP <span>GAME</span></h1>
+      <p>Pilih game, nominal, lalu isi data pemesanan.</p>
+    </div>
+    <b>LX</b>
+  </div>
+
+  <h2 class="section-title">Pilih game favoritmu</h2>
+
+  <div id="gameGrid" class="game-grid"></div>
+
+  <!-- KATALOG DAN FORM TOP UP -->
+  <section id="topupCatalog" class="catalog hidden">
+
+    <div class="catalog-head">
+      <h2 id="selectedGameTitle">Pilih nominal</h2>
+      <button id="closeCatalog" class="secondary">Ganti game</button>
+    </div>
+
+    <div class="checkout-grid">
+
+      <div id="topupProducts" class="products"></div>
+
+      <form id="topupForm" class="form-card">
+        <h3>Data pemesanan</h3>
+
+        <label>
+          Nama pemesan
+          <input id="topupName" required>
+        </label>
+
+        <label>
+          ID Game / Player ID
+          <input id="playerId" required>
+        </label>
+
+        <label>
+          Server / Zone ID (jika diperlukan)
+          <input id="serverId">
+        </label>
+
+        <div class="total">
+          <span>Total</span>
+          <b id="topupTotal">Rp0</b>
+        </div>
+
+        <button class="primary" type="submit">
+          LANJUT PEMBAYARAN
+        </button>
+
+        <p class="hint">
+          Pastikan ID dan server benar sebelum melanjutkan.
+        </p>
+      </form>
+
+    </div>
+  </section>
+</section>
+
+<!-- HALAMAN JOKI -->
+<section class="page" id="page-joki">
+
+  <button class="back" data-page="home">
+    ← Kembali ke beranda
+  </button>
+
+  <div class="section-banner purple-banner">
+    <div>
+      <small>LIXERA SERVICE</small>
+      <h1>JOKI <span>GAME</span></h1>
+      <p>Pilih layanan sesuai kebutuhanmu.</p>
+    </div>
+    <b>LX</b>
+  </div>
+
+  <div class="joki-cats">
+
+    <button class="joki-card" data-joki="rank">
+      <img src="catagoryjokirank.jpg" alt="Joki Rank">
+      <div>
+        <small>RANK PUSH</small>
+        <h2>JOKI RANK</h2>
+        <p>Naikkan rank sesuai target.</p>
+        <strong>PILIH LAYANAN ↗</strong>
+      </div>
+    </button>
+
+    <button class="joki-card" data-joki="gendong">
+      <img src="catagoryjokigendong.jpg" alt="Joki Gendong">
+      <div>
+        <small>MABAR SERVICE</small>
+        <h2>JOKI GENDONG</h2>
+        <p>Mabar bersama pemain.</p>
+        <strong>PILIH LAYANAN ↗</strong>
+      </div>
+    </button>
+
+  </div>
+
+  <!-- KATALOG JOKI -->
+  <section id="jokiDetail" class="catalog hidden">
+
+    <div class="joki-banner">
+      <img id="jokiBannerImage" src="bannerjokirank.png" alt="Banner Joki">
+    </div>
+
+    <div class="catalog-head">
+      <h2 id="jokiTitle">JOKI RANK</h2>
+      <button id="closeJoki" class="secondary">Ganti layanan</button>
+    </div>
+
+    <div id="jokiProducts" class="products joki-products"></div>
+
+    <form id="jokiForm" class="form-card joki-form">
+      <h3>Data pemesanan</h3>
+
+      <label>
+        Nama pemesan
+        <input id="jokiName" required>
+      </label>
+
+      <label>
+        Nickname Mobile Legends
+        <input id="jokiNick" required>
+      </label>
+
+      <label>
+        ID Game
+        <input id="jokiId" required>
+      </label>
+
+      <label>
+        Server / Zone ID
+        <input id="jokiServer">
+      </label>
+
+      <label>
+        Rank awal / target / catatan
+        <textarea id="jokiNotes" rows="3"></textarea>
+      </label>
+
+      <div class="total">
+        <span>Total</span>
+        <b id="jokiTotal">Pilih produk</b>
+      </div>
+
+      <button class="primary" type="submit">
+        LANJUT PEMBAYARAN
+      </button>
+    </form>
+
+  </section>
+</section>
+
+  </main>  <!-- POPUP PEMBAYARAN QRIS -->  <div class="modal hidden" id="paymentModal">
+    <div class="modal-card">  <button id="closePayment" class="close" aria-label="Tutup">×</button>
+
+  <small>LANGKAH PEMBAYARAN</small>
+  <h2>Selesaikan pembayaran</h2>
+
+  <p>
+    Scan QRIS berikut menggunakan aplikasi pembayaran
+    yang mendukung QRIS.
+  </p>
+
+  <div class="qris">
+    <img
+      src="qrislixera.png"
+      alt="QRIS LIXERA"
+      onerror="this.style.display='none';this.parentElement.textContent='File qrislixera.png belum ditemukan.'">
+  </div>
+
+  <div class="summary">
+    <div>
+      <span>Pesanan</span>
+      <b id="paymentProduct">-</b>
+    </div>
+    <div>
+      <span>Total</span>
+      <b id="paymentTotal">Rp0</b>
+    </div>
+  </div>
+
+  <label class="check">
+    <input type="checkbox" id="paidCheck">
+    Saya sudah menyelesaikan pembayaran
+  </label>
+
+  <button class="primary" id="confirmWhatsApp" disabled>
+    KONFIRMASI VIA WHATSAPP
+  </button>
+
+  <p class="hint">
+    Pembayaran perlu diverifikasi admin secara manual.
+  </p>
+
+</div>
+
+  </div>  <script src="script.js"></script></body>
+      </html>
