@@ -1,728 +1,931 @@
-"use strict";
+'use strict';
 
 /* ==========================================
-   LIXERA STORE — SCRIPT.JS
-   Katalog, Top Up, Joki, QRIS, WhatsApp
+   LIXERA STORE — MAIN SCRIPT
+   BAGIAN 1: NAVIGASI, KATALOG, DAN TOP UP
 ========================================== */
 
-const ADMIN_WA = "628818238236";
-const STORAGE_KEY = "lixera_orders_v1";
+const ADMIN_WA = '628818238236';
+
+const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => [...document.querySelectorAll(selector)];
+
+const rupiah = (number) =>
+  new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    maximumFractionDigits: 0
+  }).format(Number(number) || 0);
+
+function showToast(message) {
+  const toast = $('#toast');
+
+  if (!toast) {
+    alert(message);
+    return;
+  }
+
+  toast.textContent = message;
+  toast.classList.add('show');
+
+  clearTimeout(showToast.timer);
+
+  showToast.timer = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 2600);
+}
 
 /* ==========================================
-   1. DATA GAME DAN KATALOG HARGA
+   NAVIGASI HALAMAN
 ========================================== */
 
-const games = [
+function showPage(pageName) {
+  const page = $(`#${pageName}`);
+
+  if (!page || !page.classList.contains('page')) {
+    showToast('Halaman belum tersedia.');
+    return;
+  }
+
+  $$('.page').forEach((item) => {
+    item.classList.toggle('active', item.id === pageName);
+  });
+
+  $$('[data-page]').forEach((button) => {
+    button.classList.toggle(
+      'active',
+      button.dataset.page === pageName
+    );
+  });
+
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+}
+
+$$('[data-page]').forEach((button) => {
+  button.addEventListener('click', () => {
+    showPage(button.dataset.page);
+  });
+});
+
+const headerOrders = $('#headerOrders');
+
+if (headerOrders) {
+  headerOrders.addEventListener('click', () => {
+    showPage('orders');
+  });
+}
+
+$$('[data-goto]').forEach((button) => {
+  button.addEventListener('click', () => {
+    showPage(button.dataset.goto);
+  });
+});
+
+/* ==========================================
+   DATA GAME DAN KATALOG TOP UP
+   Harga contoh: sesuaikan sebelum website
+   dipublikasikan ke pelanggan.
+========================================== */
+
+const GAMES = [
   {
-    id: "ml",
-    name: "Mobile Legends",
-    image: "mobilelegends.png",
-    icon: "⚔️",
+    id: 'mobilelegends',
+    name: 'Mobile Legends',
+    image: 'mobilelegends.png',
     products: [
-      ["5 Diamond", 1600], ["10 Diamond", 3545],
-      ["12 Diamond", 3845], ["19 Diamond", 6500],
-      ["28 Diamond", 10000], ["44 Diamond", 13800],
-      ["54 Diamond", 16700], ["59 Diamond", 17800],
-      ["71 Diamond", 22000], ["74 Diamond", 23400],
-      ["85 Diamond", 26400], ["88 Diamond", 27400],
-      ["110 Diamond", 33000], ["113 Diamond", 35000],
-      ["128 Diamond", 43112], ["148 Diamond", 49000],
-      ["222 Diamond", 75000], ["240 Diamond", 79000],
-      ["277 Diamond", 86000], ["284 Diamond", 87430],
-      ["296 Diamond", 90000], ["301 Diamond", 104000],
-      ["346 Diamond", 109435], ["356 Diamond", 113000],
-      ["370 Diamond", 114800], ["384 Diamond", 118000],
-      ["408 Diamond", 125100], ["424 Diamond", 131230],
-      ["452 Diamond", 147900], ["518 Diamond", 171200],
-      ["568 Diamond", 182345], ["601 Diamond", 194320],
-      ["642 Diamond", 207132], ["716 Diamond", 231000],
-      ["758 Diamond", 249100], ["790 Diamond", 258000],
-      ["845 Diamond", 274000], ["875 Diamond", 281200],
-      ["938 Diamond", 301000], ["1045 Diamond", 313000],
-      ["1136 Diamond", 364238], ["1159 Diamond", 373100],
-      ["1443 Diamond", 462233], ["1506 Diamond", 482344],
-      ["1704 Diamond", 546022], ["2010 Diamond", 562376],
-      ["2232 Diamond", 692222], ["2625 Diamond", 815000],
-      ["3453 Diamond", 1081456],
-      ["Weekly Diamond Pass 1x", 31500],
-      ["Weekly Diamond Pass 2x", 63000],
-      ["Weekly Diamond Pass 3x", 94500],
-      ["Twilight Pass", 170000],
-      ["Weekly Elite Bundle", 17200],
-      ["Monthly Efic Bundle", 84756]
+      { name: '5 Diamonds', price: 2500 },
+      { name: '12 Diamonds', price: 5000 },
+      { name: '19 Diamonds', price: 7000 },
+      { name: '28 Diamonds', price: 9000 },
+      { name: '36 Diamonds', price: 11000 },
+      { name: '56 Diamonds', price: 16000 },
+      { name: '85 Diamonds', price: 23000 },
+      { name: '112 Diamonds', price: 30000 },
+      { name: 'Weekly Diamond Pass', price: 32500 },
+      { name: '170 Diamonds', price: 45000 },
+      { name: '240 Diamonds', price: 62000 },
+      { name: '296 Diamonds', price: 76000 },
+      { name: '408 Diamonds', price: 103000 },
+      { name: '568 Diamonds', price: 142000 },
+      { name: '875 Diamonds', price: 215000 },
+      { name: '2010 Diamonds', price: 490000 }
     ]
   },
   {
-    id: "ff",
-    name: "Free Fire",
-    image: "freefire.png",
-    icon: "🔥",
+    id: 'freefire',
+    name: 'Free Fire',
+    image: 'freefire.png',
     products: [
-      ["5 Diamond", 950], ["10 Diamond", 1962],
-      ["20 Diamond", 3800], ["50 Diamond", 7300],
-      ["70 Diamond", 9500], ["80 Diamond", 12000],
-      ["100 Diamond", 14356], ["120 Diamond", 18700],
-      ["130 Diamond", 19100], ["145 Diamond", 21300],
-      ["150 Diamond", 22100], ["190 Diamond", 28760],
-      ["200 Diamond", 30118], ["210 Diamond", 31000],
-      ["280 Diamond", 40900], ["355 Diamond", 47320],
-      ["420 Diamond", 58876], ["425 Diamond", 59132],
-      ["475 Diamond", 67344], ["495 Diamond", 69786],
-      ["500 Diamond", 70000], ["510 Diamond", 72400],
-      ["545 Diamond", 77100], ["565 Diamond", 79333],
-      ["600 Diamond", 86111], ["635 Diamond", 89100],
-      ["720 Diamond", 97000], ["800 Diamond", 109345],
-      ["860 Diamond", 118222], ["930 Diamond", 128999],
-      ["1000 Diamond", 139000], ["1050 Diamond", 142500],
-      ["1075 Diamond", 152000], ["1080 Diamond", 149000],
-      ["1440 Diamond", 200000], ["1450 Diamond", 230000],
-      ["2160 Diamond", 301000], ["2180 Diamond", 305000],
-      ["7290 Diamond", 982000], ["36500 Diamond", 5005000],
-      ["73100 Diamond", 10010000],
-      ["Member Mingguan", 28000],
-      ["Member Bulanan", 93000],
-      ["BP Card", 47000],
-      ["Level Up Pass 6", 6000],
-      ["Level Up Pass 10", 9800],
-      ["Level Up Pass 15", 9800],
-      ["Level Up Pass 20", 9800],
-      ["Level Up Pass 30", 15000]
+      { name: '5 Diamonds', price: 1500 },
+      { name: '12 Diamonds', price: 2500 },
+      { name: '50 Diamonds', price: 8000 },
+      { name: '70 Diamonds', price: 10000 },
+      { name: '100 Diamonds', price: 15000 },
+      { name: '140 Diamonds', price: 20000 },
+      { name: '210 Diamonds', price: 30000 },
+      { name: '355 Diamonds', price: 50000 },
+      { name: '720 Diamonds', price: 100000 },
+      { name: '1450 Diamonds', price: 200000 }
     ]
   },
   {
-    id: "pubg",
-    name: "PUBG Mobile",
-    image: "pubgmobile.png",
-    icon: "🎯",
+    id: 'pubgmobile',
+    name: 'PUBG Mobile',
+    image: 'pubgmobile.png',
     products: [
-      ["60 UC", 17000], ["120 UC", 34000],
-      ["300 + 25 UC", 85000], ["600 + 60 UC", 170500],
-      ["1500 + 300 UC", 425000], ["3000 + 850 UC", 850000],
-      ["6000 + 2100 UC", 1700000],
-      ["12000 + 4200 UC", 3400000],
-      ["18000 + 6300 UC", 5096000],
-      ["24000 + 8400 UC", 6795000],
-      ["36000 + 12600 UC", 10192000],
-      ["48000 + 16800 UC", 13600000]
+      { name: '60 UC', price: 16000 },
+      { name: '120 UC', price: 32000 },
+      { name: '180 UC', price: 47000 },
+      { name: '325 UC', price: 79000 },
+      { name: '385 UC', price: 95000 },
+      { name: '660 UC', price: 158000 },
+      { name: '1800 UC', price: 395000 }
     ]
   },
   {
-    id: "hok",
-    name: "Honor of Kings",
-    image: "honorofkings.png",
-    icon: "👑",
+    id: 'honorofkings',
+    name: 'Honor of Kings',
+    image: 'honorofkings.png',
     products: [
-      ["80 Token", 16200], ["240 Token", 47200],
-      ["400 Token", 80200], ["560 Token", 107000],
-      ["800 + 30 Token", 160500],
-      ["2400 + 108 Token", 480500],
-      ["4000 + 180 Token", 802000],
-      ["8000 + 360 Token", 1600000]
+      { name: '8 Tokens', price: 2000 },
+      { name: '16 Tokens', price: 4000 },
+      { name: '80 Tokens', price: 16000 },
+      { name: '240 Tokens', price: 47000 },
+      { name: '400 Tokens', price: 78000 },
+      { name: '800 Tokens', price: 155000 }
     ]
   },
   {
-    id: "fc",
-    name: "FC Mobile",
-    image: "fcmobile.png",
-    icon: "⚽",
+    id: 'fcmobile',
+    name: 'FC Mobile',
+    image: 'fcmobile.png',
     products: [
-      ["40 FC Point", 6800], ["100 FC Point", 16000],
-      ["520 FC Point", 78000], ["1070 FC Point", 157000],
-      ["2200 FC Point", 323500], ["5750 FC Point", 784444],
-      ["12000 FC Point", 1570000],
-      ["39 Silver", 6900], ["99 Silver", 16300],
-      ["499 Silver", 78000], ["999 Silver", 156999],
-      ["1999 Silver", 323500], ["4999 Silver", 785987],
-      ["9999 Silver", 1600000]
+      { name: '40 FC Points', price: 10000 },
+      { name: '100 FC Points', price: 23000 },
+      { name: '520 FC Points', price: 105000 },
+      { name: '1070 FC Points', price: 210000 }
     ]
   },
   {
-    id: "aov",
-    name: "Arena of Valor",
-    image: "arenaofvalor.png",
-    icon: "🛡️",
+    id: 'arenaofvalor',
+    name: 'Arena of Valor',
+    image: 'arenaofvalor.png',
     products: [
-      ["40 Voucher", 10200], ["90 Voucher", 20200],
-      ["230 Voucher", 50200], ["470 Voucher", 100200],
-      ["950 Voucher", 200500], ["1430 Voucher", 300500],
-      ["2390 Voucher", 500500]
+      { name: '40 Vouchers', price: 10000 },
+      { name: '90 Vouchers', price: 20000 },
+      { name: '230 Vouchers', price: 50000 },
+      { name: '470 Vouchers', price: 100000 }
     ]
   },
   {
-    id: "mcgg",
-    name: "Magic Chess GoGo",
-    image: "magicchessgogo.png",
-    icon: "♟️",
+    id: 'magicchessgogo',
+    name: 'Magic Chess: Go Go',
+    image: 'magicchessgogo.png',
     products: [
-      ["5 Diamond", 1800], ["12 Diamond", 4500],
-      ["19 Diamond", 6799], ["28 Diamond", 9764],
-      ["44 Diamond", 15000], ["59 Diamond", 20122],
-      ["86 Diamond", 29311], ["170 Diamond", 58200],
-      ["240 Diamond", 81500], ["296 Diamond", 96600],
-      ["408 Diamond", 137333], ["568 Diamond", 188888],
-      ["875 Diamond", 290000], ["2010 Diamond", 638200],
-      ["4830 Diamond", 1500000],
-      ["Weekly Card", 32000],
-      ["Lukas Latest Bounty", 18888],
-      ["Battle for Discount", 18888]
+      { name: '10 Diamonds', price: 3000 },
+      { name: '50 Diamonds', price: 12000 },
+      { name: '100 Diamonds', price: 24000 },
+      { name: '300 Diamonds', price: 70000 }
     ]
   },
   {
-    id: "fdbp",
-    name: "Football Dream",
-    image: "football-dream-be-a-pro.png",
-    icon: "🏟️",
+    id: 'football-dream-be-a-pro',
+    name: 'Football Dream: Be a Pro',
+    image: 'football-dream-be-a-pro.png',
     products: [
-      ["60 Supreme Token", 14600],
-      ["180 Supreme Token", 42800],
-      ["300 Supreme Token", 71000],
-      ["680 Supreme Token", 142300],
-      ["940 Supreme Token", 212500],
-      ["1280 Supreme Token", 284200],
-      ["1980 Supreme Token", 425555],
-      ["3120 Supreme Token", 707800],
-      ["6480 Supreme Token", 1420000],
-      ["Indonesian Garuda", 24200]
+      { name: 'Paket Kecil', price: 10000 },
+      { name: 'Paket Sedang', price: 25000 },
+      { name: 'Paket Besar', price: 50000 }
     ]
   }
 ];
 
-/* ==========================================
-   2. TARIF JOKI
-========================================== */
-
-const rankOrder = ["GM", "Epic", "Legend", "Mythic", "Honor", "Glory", "Immortal"];
-
-const rankLabels = {
-  GM: "Grandmaster",
-  Epic: "Epic",
-  Legend: "Legend",
-  Mythic: "Mythic",
-  Honor: "Mythical Honor",
-  Glory: "Mythical Glory",
-  Immortal: "Mythical Immortal"
-};
-
-const rankRates = {
-  GM: 4000,
-  Epic: 6000,
-  Legend: 8000,
-  Mythic: 18000,
-  Honor: 25000,
-  Glory: 30000,
-  Immortal: 34000
-};
-
-const gendongRates = {
-  GM: 3000,
-  Epic: 5000,
-  Legend: 7000,
-  Mythic: 15000,
-  Honor: 22000,
-  Glory: 28000,
-  Immortal: 32000
-};
-
-/*
-  Skor internal untuk menghitung perjalanan rank.
-
-  GM, Epic, Legend:
-  tiap divisi V sampai I mewakili satu tingkat.
-  Setiap tingkat memiliki 0-5 bintang.
-
-  Mythic:   0-24
-  Honor:   25-49
-  Glory:   50-99
-  Immortal: 100+
-
-  Skor internal:
-  GM     -75 s/d -51
-  Epic   -50 s/d -26
-  Legend -25 s/d -1
-  Mythic   0 s/d 24
-  Honor   25 s/d 49
-  Glory   50 s/d 99
-  Immortal 100+
-*/
-
-const rankBase = {
-  GM: -75,
-  Epic: -50,
-  Legend: -25,
-  Mythic: 0,
-  Honor: 25,
-  Glory: 50,
-  Immortal: 100
-};
-
-const $ = (selector, root = document) => root.querySelector(selector);
-const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
-
-const money = amount =>
-  "Rp" + Math.round(Number(amount) || 0).toLocaleString("id-ID");
-
-const escapeHTML = value =>
-  String(value ?? "").replace(/[&<>"']/g, character => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
-  })[character]);
-
-function showToast(message) {
-  const toast = $("#toast");
-  if (!toast) return;
-
-  toast.textContent = message;
-  toast.classList.add("show");
-
-  clearTimeout(showToast.timer);
-  showToast.timer = setTimeout(() => {
-    toast.classList.remove("show");
-  }, 2800);
-}
-
-function getOrders() {
-  try {
-    const orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    return Array.isArray(orders) ? orders : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveOrders(orders) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
-  } catch {
-    showToast("Pesanan tidak bisa disimpan di perangkat ini.");
-  }
-}
+let selectedGame = null;
+let selectedProduct = null;
+let currentSearch = '';
 
 /* ==========================================
-   3. NAVIGASI HALAMAN
-========================================== */
-
-function navigateTo(pageId) {
-  const page = $("#" + pageId);
-  if (!page) return;
-
-  $$(".page").forEach(item => item.classList.remove("active"));
-  page.classList.add("active");
-
-  $$(".nav-item").forEach(item => {
-    item.classList.toggle("active", item.dataset.page === pageId);
-  });
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-$$("[data-page]").forEach(button => {
-  button.addEventListener("click", event => {
-    event.preventDefault();
-    navigateTo(button.dataset.page);
-  });
-});
-
-$("#headerOrders")?.addEventListener("click", () => {
-  navigateTo("orders");
-});
-
-/* ==========================================
-   4. BANNER SLIDER
-========================================== */
-
-(function initSlider() {
-  const slides = $$("#homeSlider .slide");
-  const dots = $$("#homeSliderDots .dot");
-
-  if (!slides.length) return;
-
-  let activeIndex = 0;
-
-  function showSlide(index) {
-    activeIndex = (index + slides.length) % slides.length;
-
-    slides.forEach((slide, i) => {
-      slide.classList.toggle("active", i === activeIndex);
-    });
-
-    dots.forEach((dot, i) => {
-      dot.classList.toggle("active", i === activeIndex);
-    });
-  }
-
-  dots.forEach((dot, index) => {
-    dot.addEventListener("click", () => showSlide(index));
-  });
-
-  setInterval(() => showSlide(activeIndex + 1), 5000);
-})();
-
-/* ==========================================
-   5. GAMBAR KATEGORI
+   TAMPILKAN KARTU GAME
 ========================================== */
 
 function gameCardHTML(game) {
   return `
-    <button class="game-card" type="button" data-game="${escapeHTML(game.id)}">
-      <span class="game-logo-wrap">
-        <img src="${escapeHTML(game.image)}"
-             alt="${escapeHTML(game.name)}"
-             loading="lazy"
-             onerror="this.style.display='none'">
-        <span class="game-fallback">${escapeHTML(game.icon)}</span>
-      </span>
-      <span class="game-name">${escapeHTML(game.name)}</span>
+    <button
+      type="button"
+      class="game-card"
+      data-select-game="${game.id}"
+      aria-label="Pilih ${game.name}"
+    >
+      <div class="game-logo-wrap">
+        <img
+          class="game-logo"
+          src="${game.image}"
+          alt="${game.name}"
+          loading="lazy"
+          onerror="this.style.opacity='.25'"
+        >
+      </div>
+
+      <div class="game-name">${game.name}</div>
+      <div class="game-status">Top up tersedia</div>
     </button>
   `;
 }
 
 function renderGameGrids() {
-  const html = games.map(gameCardHTML).join("");
+  const homeGames = $('#homeGames');
+  const topupGames = $('#topupGames');
 
-  if ($("#homeGames")) $("#homeGames").innerHTML = html;
-  if ($("#topupGames")) $("#topupGames").innerHTML = html;
+  if (homeGames) {
+    homeGames.innerHTML = GAMES
+      .slice(0, 4)
+      .map(gameCardHTML)
+      .join('');
+  }
+
+  if (topupGames) {
+    topupGames.innerHTML = GAMES
+      .map(gameCardHTML)
+      .join('');
+  }
 }
-
-renderGameGrids();
-
-let selectedGame = null;
-let selectedProduct = null;
 
 function selectGame(gameId) {
-  const game = games.find(item => item.id === gameId);
-  if (!game) return;
+  const game = GAMES.find((item) => item.id === gameId);
 
-  selectedGame = game;
-  selectedProduct = null;
-
-  $("#gameTitle").textContent = game.name;
-  $("#changeGame").hidden = false;
-  $("#topupFormCard").hidden = true;
-  $("#search").value = "";
-
-  $$(".game-card").forEach(card => {
-    card.classList.toggle("selected", card.dataset.game === gameId);
-  });
-
-  renderProducts();
-  $("#catalog").scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
-document.addEventListener("click", event => {
-  const gameButton = event.target.closest("[data-game]");
-  if (gameButton) selectGame(gameButton.dataset.game);
-});
-
-function renderProducts() {
-  const productGrid = $("#products");
-  const empty = $("#empty");
-
-  if (!selectedGame) {
-    productGrid.innerHTML = "";
-    empty.hidden = false;
-    empty.querySelector("h3").textContent = "Belum Ada Produk";
-    empty.querySelector("p").textContent = "Pilih salah satu game untuk melihat katalog.";
+  if (!game) {
+    showToast('Game tidak ditemukan.');
     return;
   }
 
-  const query = ($("#search").value || "").trim().toLowerCase();
+  selectedGame = game;
+  selectedProduct = null;
+  currentSearch = '';
 
-  const products = selectedGame.products.filter(product =>
-    product[0].toLowerCase().includes(query)
-  );
+  const search = $('#search');
 
-  productGrid.innerHTML = products.map((product, index) => {
-    const originalIndex = selectedGame.products.indexOf(product);
-    const isSelected =
-      selectedProduct &&
-      selectedProduct.gameId === selectedGame.id &&
-      selectedProduct.index === originalIndex;
+  if (search) search.value = '';
 
-    return `
-      <button class="product-card ${isSelected ? "selected" : ""}"
-              type="button"
-              data-product-index="${originalIndex}">
-        <span class="product-name">${escapeHTML(product[0])}</span>
-        <span class="product-desc">${escapeHTML(selectedGame.name)}</span>
-        <span class="product-price">${money(product[1])}</span>
-        <span class="product-select">${isSelected ? "DIPILIH ✓" : "PILIH PRODUK"}</span>
-      </button>
-    `;
-  }).join("");
+  const gameTitle = $('#gameTitle');
 
-  empty.hidden = products.length > 0;
+  if (gameTitle) {
+    gameTitle.textContent = game.name;
+  }
 
-  if (!products.length) {
-    empty.querySelector("h3").textContent = "Produk Tidak Ditemukan";
-    empty.querySelector("p").textContent = "Coba kata kunci pencarian lain.";
+  const catalog = $('#catalog');
+
+  if (catalog) {
+    catalog.classList.remove('hidden');
+  }
+
+  const formCard = $('#topupFormCard');
+
+  if (formCard) {
+    formCard.classList.add('hidden');
+  }
+
+  renderProducts();
+  showPage('topup');
+
+  if (catalog) {
+    setTimeout(() => {
+      catalog.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }, 100);
   }
 }
 
-$("#search")?.addEventListener("input", renderProducts);
+document.addEventListener('click', (event) => {
+  const gameButton = event.target.closest('[data-select-game]');
 
-$("#products")?.addEventListener("click", event => {
-  const card = event.target.closest("[data-product-index]");
-  if (!card || !selectedGame) return;
-
-  const index = Number(card.dataset.productIndex);
-  const product = selectedGame.products[index];
-  if (!product) return;
-
-  selectedProduct = {
-    gameId: selectedGame.id,
-    gameName: selectedGame.name,
-    index,
-    name: product[0],
-    price: product[1]
-  };
-
-  $("#chosenProduct").textContent = product[0];
-  $("#topupPrice").textContent = money(product[1]);
-  $("#topupFormCard").hidden = false;
-
-  renderProducts();
-
-  $("#topupFormCard").scrollIntoView({
-    behavior: "smooth",
-    block: "start"
-  });
-});
-
-$("#changeGame")?.addEventListener("click", () => {
-  $("#topupGames")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (gameButton) {
+    selectGame(gameButton.dataset.selectGame);
+  }
 });
 
 /* ==========================================
-   6. FORM TOP UP
+   RENDER PRODUK DAN PENCARIAN
+========================================== */
+
+function renderProducts() {
+  const productsContainer = $('#products');
+  const emptyState = $('#empty');
+
+  if (!productsContainer || !selectedGame) return;
+
+  const filtered = selectedGame.products.filter((product) => {
+    return product.name
+      .toLowerCase()
+      .includes(currentSearch.toLowerCase());
+  });
+
+  productsContainer.innerHTML = filtered.map((product, index) => `
+    <article class="product-card">
+      <div class="product-name">${product.name}</div>
+
+      <div class="product-description">
+        ${selectedGame.name}
+      </div>
+
+      <div class="product-price">
+        ${rupiah(product.price)}
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-primary btn-block btn-small"
+        data-buy-game="${selectedGame.id}"
+        data-product-index="${selectedGame.products.indexOf(product)}"
+      >
+        Pilih Nominal
+      </button>
+    </article>
+  `).join('');
+
+  if (emptyState) {
+    emptyState.classList.toggle('hidden', filtered.length > 0);
+  }
+}
+
+const searchInput = $('#search');
+
+if (searchInput) {
+  searchInput.addEventListener('input', () => {
+    currentSearch = searchInput.value.trim();
+    renderProducts();
+  });
+}
+
+const changeGameButton = $('#changeGame');
+
+if (changeGameButton) {
+  changeGameButton.addEventListener('click', () => {
+    selectedGame = null;
+    selectedProduct = null;
+
+    const catalog = $('#catalog');
+    const formCard = $('#topupFormCard');
+
+    if (catalog) catalog.classList.add('hidden');
+    if (formCard) formCard.classList.add('hidden');
+
+    showPage('topup');
+  });
+}
+
+/* ==========================================
+   PILIH PRODUK TOP UP
+========================================== */
+
+document.addEventListener('click', (event) => {
+  const buyButton = event.target.closest('[data-buy-game]');
+
+  if (!buyButton) return;
+
+  const game = GAMES.find(
+    (item) => item.id === buyButton.dataset.buyGame
+  );
+
+  if (!game) return;
+
+  const index = Number(buyButton.dataset.productIndex);
+  const product = game.products[index];
+
+  if (!product) {
+    showToast('Produk tidak ditemukan.');
+    return;
+  }
+
+  selectedGame = game;
+  selectedProduct = product;
+
+  const chosenProduct = $('#chosenProduct');
+  const topupPrice = $('#topupPrice');
+  const formCard = $('#topupFormCard');
+
+  if (chosenProduct) {
+    chosenProduct.textContent =
+      `${game.name} — ${product.name}`;
+  }
+
+  if (topupPrice) {
+    topupPrice.textContent = rupiah(product.price);
+  }
+
+  if (formCard) {
+    formCard.classList.remove('hidden');
+
+    setTimeout(() => {
+      formCard.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }, 100);
+  }
+});
+
+/* ==========================================
+   DATA ORDER SEMENTARA
+   BAGIAN 2 AKAN MENAMBAHKAN PEMBAYARAN,
+   JOKI, DAN KONFIRMASI WHATSAPP.
 ========================================== */
 
 let pendingOrder = null;
 
-function validPhone(phone) {
-  const digits = String(phone || "").replace(/\D/g, "");
-  return digits.length >= 9 && digits.length <= 15;
+function createOrderId() {
+  return 'LX' + Date.now().toString().slice(-9);
 }
 
-function normalizePhone(phone) {
-  let digits = String(phone || "").replace(/\D/g, "");
-  if (digits.startsWith("0")) digits = "62" + digits.slice(1);
-  if (digits.startsWith("8")) digits = "62" + digits;
-  return digits;
+function openWhatsApp(message) {
+  const url =
+    `https://wa.me/${ADMIN_WA}?text=${encodeURIComponent(message)}`;
+
+  window.open(url, '_blank');
 }
 
-function openPayment(order) {
-  pendingOrder = {
-    ...order,
-    orderId: "LX" + Date.now().toString().slice(-9),
-    createdAt: new Date().toISOString(),
-    status: "Menunggu konfirmasi admin"
-  };
+/* Inisialisasi katalog game */
+renderGameGrids();
+/* ==========================================
+   BAGIAN 2: JOKI MLBB
+========================================== */
 
-  $("#paymentProduct").textContent = order.product;
-  $("#paymentPrice").textContent = money(order.price);
-  $("#paidCheck").checked = false;
-  $("#confirmWA").disabled = true;
-  $("#paymentModal").hidden = false;
-  document.body.style.overflow = "hidden";
+const RANKS = [
+  { id: 'gm', name: 'Grandmaster', price: 4000, carry: 3000, min: 0, max: 24 },
+  { id: 'epic', name: 'Epic', price: 6000, carry: 5000, min: 25, max: 49 },
+  { id: 'legend', name: 'Legend', price: 8000, carry: 7000, min: 50, max: 99 },
+  { id: 'mythic', name: 'Mythic', price: 18000, carry: 15000, min: 0, max: 24 },
+  { id: 'honor', name: 'Mythical Honor', price: 25000, carry: 22000, min: 25, max: 49 },
+  { id: 'glory', name: 'Mythical Glory', price: 30000, carry: 28000, min: 50, max: 99 },
+  { id: 'immortal', name: 'Mythical Immortal', price: 34000, carry: 32000, min: 100, max: 1000 }
+];
+
+let selectedJoki = 'rank';
+let pendingJoki = null;
+
+function getRank(id) {
+  return RANKS.find(rank => rank.id === id);
 }
 
-function closePayment() {
-  $("#paymentModal").hidden = true;
-  document.body.style.overflow = "";
+function rankOptions() {
+  return RANKS.map(rank =>
+    `<option value="${rank.id}">${rank.name}</option>`
+  ).join('');
 }
 
-$("#closeModal")?.addEventListener("click", closePayment);
-$("#cancelPayment")?.addEventListener("click", closePayment);
-
-$("#paymentModal")?.addEventListener("click", event => {
-  if (event.target.id === "paymentModal") closePayment();
+['#rankFrom', '#rankTo', '#gendongRank'].forEach(selector => {
+  const select = $(selector);
+  if (select) select.innerHTML = rankOptions();
 });
 
-document.addEventListener("keydown", event => {
-  if (event.key === "Escape" && $("#paymentModal") && !$("#paymentModal").hidden) {
-    closePayment();
+function getDivisionStars(rankId, division, stars) {
+  const base = {
+    gm: 0,
+    epic: 25,
+    legend: 50
+  }[rankId];
+
+  if (base === undefined) return Number(stars) || 0;
+
+  const div = Math.max(1, Math.min(5, Number(division) || 5));
+  return base + (5 - div) * 5 + (Number(stars) || 0);
+}
+
+function getRankForStar(star) {
+  if (star < 25) return getRank('gm');
+  if (star < 50) return getRank('epic');
+  if (star < 100) return getRank('legend');
+  if (star < 125) return getRank('mythic');
+  if (star < 150) return getRank('honor');
+  if (star < 200) return getRank('glory');
+  return getRank('immortal');
+}
+
+function calculateRankJoki(from, to) {
+  let total = 0;
+  const breakdown = [];
+
+  for (let star = from; star < to; star++) {
+    const rank = getRankForStar(star);
+    total += rank.price;
+    breakdown.push(`${rank.name}: ${rupiah(rank.price)}`);
+  }
+
+  return { total, breakdown };
+}
+
+function updateRankJoki() {
+  const fromRank = $('#rankFrom')?.value || 'gm';
+  const toRank = $('#rankTo')?.value || 'epic';
+
+  const fromDivision = Number($('#fromDivision')?.value || 5);
+  const toDivision = Number($('#toDivision')?.value || 5);
+  const fromStars = Number($('#fromStars')?.value || 0);
+  const toStars = Number($('#toStars')?.value || 0);
+
+  const from = getDivisionStars(fromRank, fromDivision, fromStars);
+  const to = getDivisionStars(toRank, toDivision, toStars);
+
+  const result = calculateRankJoki(from, to);
+  const valid = to > from;
+
+  const totalEl = $('#jokiTotal');
+  const countEl = $('#jokiStarCount');
+  const breakdownEl = $('#jokiBreakdown');
+
+  if (totalEl) totalEl.textContent = valid ? rupiah(result.total) : rupiah(0);
+  if (countEl) countEl.textContent = valid ? `${to - from} bintang` : '0 bintang';
+
+  if (breakdownEl) {
+    breakdownEl.textContent = valid
+      ? result.breakdown.join(' + ')
+      : 'Rank tujuan harus lebih tinggi dari rank awal.';
+  }
+}
+
+function updateDivisionVisibility() {
+  const fromRank = $('#rankFrom')?.value || 'gm';
+  const toRank = $('#rankTo')?.value || 'epic';
+
+  const fromField = $('#fromDivisionField');
+  const toField = $('#toDivisionField');
+
+  if (fromField) {
+    fromField.classList.toggle('hidden', !['gm', 'epic', 'legend'].includes(fromRank));
+  }
+
+  if (toField) {
+    toField.classList.toggle('hidden', !['gm', 'epic', 'legend'].includes(toRank));
+  }
+}
+
+['#rankFrom', '#rankTo', '#fromDivision', '#toDivision', '#fromStars', '#toStars']
+  .forEach(selector => {
+    const element = $(selector);
+    if (element) {
+      element.addEventListener('change', () => {
+        updateDivisionVisibility();
+        updateRankJoki();
+      });
+      element.addEventListener('input', updateRankJoki);
+    }
+  });
+
+function updateGendong() {
+  const rankId = $('#gendongRank')?.value || 'gm';
+  const stars = Math.max(1, Number($('#gendongStars')?.value || 1));
+  const rank = getRank(rankId);
+  const total = rank ? rank.carry * stars : 0;
+
+  const countEl = $('#gendongCount');
+  const totalEl = $('#gendongTotal');
+
+  if (countEl) countEl.textContent = `${stars} bintang`;
+  if (totalEl) totalEl.textContent = rupiah(total);
+}
+
+['#gendongRank', '#gendongStars'].forEach(selector => {
+  const element = $(selector);
+  if (element) {
+    element.addEventListener('input', updateGendong);
+    element.addEventListener('change', updateGendong);
   }
 });
 
-$("#paidCheck")?.addEventListener("change", event => {
-  $("#confirmWA").disabled = !event.target.checked;
+$$('[data-joki]').forEach(button => {
+  button.addEventListener('click', () => {
+    selectedJoki = button.dataset.joki;
+
+    $$('[data-joki]').forEach(item => {
+      item.classList.toggle('active', item === button);
+    });
+
+    const rankForm = $('#rankForm');
+    const gendongForm = $('#gendongForm');
+    const detail = $('#jokiDetail');
+    const title = $('#jokiTitle');
+
+    if (rankForm) rankForm.classList.toggle('hidden', selectedJoki !== 'rank');
+    if (gendongForm) gendongForm.classList.toggle('hidden', selectedJoki !== 'gendong');
+    if (detail) detail.classList.remove('hidden');
+
+    if (title) {
+      title.textContent = selectedJoki === 'rank'
+        ? 'Joki Rank MLBB'
+        : 'Joki Gendong MLBB';
+    }
+
+    if (detail) {
+      detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
 });
 
-$("#topupForm")?.addEventListener("submit", event => {
+const changeJoki = $('#changeJoki');
+
+if (changeJoki) {
+  changeJoki.addEventListener('click', () => {
+    $('#jokiDetail')?.classList.add('hidden');
+  });
+}
+
+updateDivisionVisibility();
+updateRankJoki();
+updateGendong();
+
+/* ==========================================
+   MODAL PEMBAYARAN QRIS
+========================================== */
+
+const paymentModal = $('#paymentModal');
+
+function openPaymentModal(order) {
+  pendingOrder = order;
+
+  if (!paymentModal) {
+    showToast('Modal pembayaran tidak ditemukan di HTML.');
+    return;
+  }
+
+  const productEl = $('#paymentProduct');
+  const priceEl = $('#paymentPrice');
+  const paidCheck = $('#paidCheck');
+  const confirmButton = $('#confirmWA');
+
+  if (productEl) productEl.textContent = order.product;
+  if (priceEl) priceEl.textContent = rupiah(order.price);
+  if (paidCheck) paidCheck.checked = false;
+  if (confirmButton) confirmButton.disabled = true;
+
+  paymentModal.classList.add('show');
+  paymentModal.setAttribute('aria-hidden', 'false');
+}
+
+function closePaymentModal() {
+  if (!paymentModal) return;
+
+  paymentModal.classList.remove('show');
+  paymentModal.setAttribute('aria-hidden', 'true');
+}
+
+$('#closeModal')?.addEventListener('click', closePaymentModal);
+$('#cancelPayment')?.addEventListener('click', closePaymentModal);
+
+paymentModal?.addEventListener('click', event => {
+  if (event.target === paymentModal) closePaymentModal();
+});
+
+$('#paidCheck')?.addEventListener('change', event => {
+  const confirmButton = $('#confirmWA');
+  if (confirmButton) confirmButton.disabled = !event.target.checked;
+});
+
+/* ==========================================
+   RIWAYAT PESANAN
+========================================== */
+
+const STORAGE_KEY = 'lixera_store_orders_v1';
+
+function getOrders() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  } catch {
+    return [];
+  }
+}
+
+function saveOrder(order) {
+  const orders = getOrders();
+  orders.unshift(order);
+
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(orders.slice(0, 50)));
+  } catch {
+    showToast('Riwayat tidak bisa disimpan di browser ini.');
+  }
+
+  renderOrders();
+}
+
+function renderOrders() {
+  const list = $('#ordersList');
+  if (!list) return;
+
+  const orders = getOrders();
+
+  if (!orders.length) {
+    list.innerHTML = '<div class="empty-state">Belum ada pesanan.</div>';
+    return;
+  }
+
+  list.innerHTML = orders.map(order => `
+    <article class="order-card">
+      <div class="order-card-header">
+        <div class="order-card-title">${escapeHTML(order.product)}</div>
+        <span class="order-status">${escapeHTML(order.status || 'Menunggu konfirmasi')}</span>
+      </div>
+      <div class="order-meta">
+        ID: ${escapeHTML(order.id)}<br>
+        Harga: ${rupiah(order.price)}<br>
+        Waktu: ${escapeHTML(order.time)}
+      </div>
+    </article>
+  `).join('');
+}
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[char]);
+}
+
+/* ==========================================
+   FORM TOP UP
+========================================== */
+
+$('#topupForm')?.addEventListener('submit', event => {
   event.preventDefault();
 
-  if (!selectedProduct) {
-    showToast("Pilih produk Top Up terlebih dahulu.");
+  if (!selectedGame || !selectedProduct) {
+    showToast('Pilih game dan nominal terlebih dahulu.');
     return;
   }
 
-  const name = $("#topupName").value.trim();
-  const phone = $("#topupWA").value.trim();
-  const gameId = $("#gameID").value.trim();
-  const server = $("#gameServer").value.trim();
-  const nickname = $("#nickname").value.trim();
-  const note = $("#topupNote").value.trim();
+  const name = $('#topupName')?.value.trim() || '';
+  const whatsapp = $('#topupWA')?.value.trim() || '';
+  const gameID = $('#gameID')?.value.trim() || '';
+  const server = $('#gameServer')?.value.trim() || '';
+  const nickname = $('#nickname')?.value.trim() || '';
+  const note = $('#topupNote')?.value.trim() || '';
 
-  if (!name || !validPhone(phone) || !gameId) {
-    showToast("Periksa nama, nomor WhatsApp, dan ID game.");
+  if (!name || !whatsapp || !gameID) {
+    showToast('Lengkapi nama, WhatsApp, dan ID game.');
     return;
   }
 
-  openPayment({
-    type: "Top Up",
-    game: selectedProduct.gameName,
-    product: selectedProduct.name,
+  const order = {
+    id: createOrderId(),
+    type: 'Top Up',
+    product: `${selectedGame.name} — ${selectedProduct.name}`,
     price: selectedProduct.price,
     name,
-    phone: normalizePhone(phone),
-    gameId,
+    whatsapp,
+    gameID,
     server,
     nickname,
-    note
+    note,
+    time: new Date().toLocaleString('id-ID'),
+    status: 'Menunggu pembayaran'
+  };
+
+  pendingOrder = order;
+  openPaymentModal(order);
+});
+
+/* ==========================================
+   KONFIRMASI PEMBAYARAN → WHATSAPP
+========================================== */
+
+$('#confirmWA')?.addEventListener('click', () => {
+  if (!pendingOrder) {
+    showToast('Pesanan tidak ditemukan.');
+    return;
+  }
+
+  if (!$('#paidCheck')?.checked) {
+    showToast('Centang konfirmasi pembayaran terlebih dahulu.');
+    return;
+  }
+
+  const order = {
+    ...pendingOrder,
+    status: 'Menunggu verifikasi admin'
+  };
+
+  saveOrder(order);
+
+  const message = [
+    '*PESANAN LIXERA STORE*',
+    '',
+    `ID Pesanan: ${order.id}`,
+    `Jenis: ${order.type || 'Top Up'}`,
+    `Produk: ${order.product}`,
+    `Harga: ${rupiah(order.price)}`,
+    `Nama: ${order.name || '-'}`,
+    `WhatsApp: ${order.whatsapp || '-'}`,
+    `ID Game: ${order.gameID || '-'}`,
+    `Server: ${order.server || '-'}`,
+    `Nickname: ${order.nickname || '-'}`,
+    `Catatan: ${order.note || '-'}`,
+    '',
+    'Saya sudah melakukan pembayaran QRIS. Mohon periksa pembayaran dan pesanan saya.',
+    '',
+    'Catatan: konfirmasi ini bukan bukti pembayaran otomatis.'
+  ].join('\n');
+
+  closePaymentModal();
+  openWhatsApp(message);
+  showToast('Pesanan disiapkan. Selesaikan konfirmasi di WhatsApp.');
+});
+
+/* ==========================================
+   FORM JOKI RANK
+========================================== */
+
+$('#rankForm')?.addEventListener('submit', event => {
+  event.preventDefault();
+
+  const fromRank = $('#rankFrom')?.value || 'gm';
+  const toRank = $('#rankTo')?.value || 'epic';
+
+  const from = getDivisionStars(
+    fromRank,
+    Number($('#fromDivision')?.value || 5),
+    Number($('#fromStars')?.value || 0)
+  );
+
+  const to = getDivisionStars(
+    toRank,
+    Number($('#toDivision')?.value || 5),
+    Number($('#toStars')?.value || 0)
+  );
+
+  if (to <= from) {
+    showToast('Rank tujuan harus lebih tinggi dari rank awal.');
+    return;
+  }
+
+  const result = calculateRankJoki(from, to);
+  const name = $('#jokiName')?.value.trim() || '';
+  const whatsapp = $('#jokiWA')?.value.trim() || '';
+  const note = $('#jokiNote')?.value.trim() || '';
+
+  if (!name || !whatsapp) {
+    showToast('Isi nama dan nomor WhatsApp.');
+    return;
+  }
+
+  openPaymentModal({
+    id: createOrderId(),
+    type: 'Joki Rank MLBB',
+    product: `Joki Rank ${fromRank.toUpperCase()} → ${toRank.toUpperCase()}`,
+    price: result.total,
+    name,
+    whatsapp,
+    note,
+    time: new Date().toLocaleString('id-ID')
   });
 });
 
 /* ==========================================
-   7. PERHITUNGAN PANGKAT JOKI
+   FORM JOKI GENDONG
 ========================================== */
 
-function divisionNumber(value) {
-  const divisions = { V: 0, IV: 1, III: 2, II: 3, I: 4 };
-  return divisions[value] ?? 0;
-}
+$('#gendongForm')?.addEventListener('submit', event => {
+  event.preventDefault();
 
-function getRankScore(rank, stars, division) {
-  stars = Number(stars) || 0;
+  const rankId = $('#gendongRank')?.value || 'gm';
+  const stars = Math.max(1, Number($('#gendongStars')?.value || 1));
+  const rank = getRank(rankId);
 
-  if (rank === "GM" || rank === "Epic" || rank === "Legend") {
-    return rankBase[rank] + divisionNumber(division) * 5 + stars;
+  if (!rank) {
+    showToast('Pilih rank yang valid.');
+    return;
   }
 
-  if (rank === "Mythic") return stars;
-  if (rank === "Honor") return 25 + (stars - 25);
-  if (rank === "Glory") return 50 + (stars - 50);
-  if (rank === "Immortal") return stars;
+  const name = $('#gendongName')?.value.trim() || '';
+  const whatsapp = $('#gendongWA')?.value.trim() || '';
+  const note = $('#gendongNote')?.value.trim() || '';
 
-  return 0;
-}
-
-function validateRankStars(rank, stars) {
-  if (!Number.isInteger(stars)) return false;
-
-  if (["GM", "Epic", "Legend"].includes(rank)) {
-    return stars >= 0 && stars <= 5;
+  if (!name || !whatsapp) {
+    showToast('Isi nama dan nomor WhatsApp.');
+    return;
   }
 
-  if (rank === "Mythic") return stars >= 0 && stars <= 24;
-  if (rank === "Honor") return stars >= 25 && stars <= 49;
-  if (rank === "Glory") return stars >= 50 && stars <= 99;
-  if (rank === "Immortal") return stars >= 100 && stars <= 1000;
-
-  return false;
-}
-
-function describeRank(rank, stars, division) {
-  if (["GM", "Epic", "Legend"].includes(rank)) {
-    return `${rankLabels[rank]} ${division} — ${stars} bintang`;
-  }
-
-  return `${rankLabels[rank]} — ${stars} bintang`;
-}
-
-/*
-  Tarif bertingkat:
-  setiap rentang bintang memakai tarif rank yang dilalui.
-  Harga bukan tarif rank tujuan dikali seluruh bintang.
-
-  Rentang:
-  - GM/Epic/Legend: skor sebelum Mythic
-  - Mythic: 0-24
-  - Honor: 25-49
-  - Glory: 50-99
-  - Immortal: 100+
-*/
-
-function getRateForScore(score, isGendong = false) {
-  let rank;
-
-  if (score < -50) rank = "GM";
-  else if (score < -25) rank = "Epic";
-  else if (score < 0) rank = "Legend";
-  else if (score < 25) rank = "Mythic";
-  else if (score < 50) rank = "Honor";
-  else if (score < 100) rank = "Glory";
-  else rank = "Immortal";
-
-  return isGendong ? gendongRates[rank] : rankRates[rank];
-}
-
-function calculateTieredPrice(startScore, endScore, isGendong = false) {
-  if (endScore <= startScore) {
-    return { total: 0, stars: 0, breakdown: [] };
-  }
-
-  let total = 0;
-  let cursor = startScore;
-  const breakdown = [];
-
-  while (cursor < endScore) {
-    const rate = getRateForScore(cursor, isGendong);
-
-    let nextBoundary;
-
-    if (cursor < -50) nextBoundary = -50;
-    else if (cursor < -25) nextBoundary = -25;
-    else if (cursor < 0) nextBoundary = 0;
-    else if (cursor < 25) nextBoundary = 25;
-    else if (cursor < 50) nextBoundary = 50;
-    else if (cursor < 100) nextBoundary = 100;
-    else nextBoundary = endScore;
-
-    const segmentEnd = Math.min(endScore, nextBoundary);
-    const count = segmentEnd - cursor;
-
-    if (count <= 0) break;
-
-    total += count * rate;
-    breakdown.push({
-      count,
-      rate,
-      total: count * rate,
-      rank: getRateRank(cursor)
-    });
-
-    cursor = segmentEnd;
-  }
-
-  return {
-    total,
-    stars: endScore - startScore,
-    breakdown
-  };
-}
-
-function getRateRank(score) {
-  if (score < -50) return "GM";
-  if (score < -25) return "Epic";
-  if (score < 0) return "Legend";
-  if (score < 25) return "Mythic";
-  if (score < 50) return "Honor";
-  if (score < 100) return "Glory";
-  return "Immortal";
-}
-
-function formatBreakdown(result) {
-  if (!result.breakdown.length) {
-    return "Target harus lebih tinggi dari rank saat ini.";
-  }
-
-  return result.breakdown.map(item =>
-    `${item.count} bintang ${rankLabels[item.rank]} × ${money(item.rate)} = ${money(item.total)}`
-  ).join("\n");
-}
+  openPaymentModal({
+    id: createOrderId(),
+    type: 'Joki Gendong MLBB',
+    product: `Joki Gendong ${rank.name} — ${stars} bintang`,
+    price: rank.carry * stars,
+    name,
+    whatsapp,
+    note,
+    time: new Date().toLocaleString('id-ID')
+  });
+});
 
 /* ==========================================
- 
+   TOMBOL KEMBALI DAN INISIALISASI
+========================================== */
+
+renderOrders();
+
+console.log('LIXERA STORE script loaded.');
