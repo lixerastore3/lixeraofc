@@ -3,108 +3,112 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#071426">
-  <meta name="description" content="LIXERA STORE - Top Up Game dan Joki Game terpercaya.">
-  <title>LIXERA STORE | Top Up & Joki Game</title>
+  <meta name="theme-color" content="#080d1c">
+  <meta name="description" content="LIXERA STORE - Top up game dan layanan joki game cepat dan mudah.">
+  <title>LIXERA STORE — Digital Gaming Store</title>
+
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
 
+<body>
   <!-- HEADER -->
-  <header class="header">
-    <a href="#" class="brand" data-page="home">
-      <img src="LogoL.jpg" alt="Logo LIXERA" class="brand-logo">
-      <div class="brand-text">
-        <strong>LIXERA <span>STORE</span></strong>
-        <small>TOP UP • JOKI • DIGITAL</small>
-      </div>
+  <header class="site-header">
+    <a href="#" class="brand" data-page="home" aria-label="LIXERA STORE Home">
+      <img src="LogoL.jpg" alt="Logo LIXERA" class="brand-logo"
+           onerror="this.style.display='none'">
+      <span class="brand-text">
+        <strong>LIXERA</strong>
+        <small>DIGITAL STORE</small>
+      </span>
     </a>
 
-    <button class="icon-btn" id="headerOrders" type="button" aria-label="Pesanan">
-      ♧
+    <button type="button" class="header-orders" id="headerOrders">
+      📦 Pesanan
     </button>
   </header>
 
-  <main class="main-container">
-
-    <!-- ================= BERANDA ================= -->
+  <main>
+    <!-- ================= HOME ================= -->
     <section class="page active" id="home">
-
       <div class="hero">
         <div class="hero-copy">
           <span class="eyebrow">WELCOME TO</span>
           <h1>LIXERA <span>STORE</span></h1>
-          <p>Top up game dan layanan joki dengan proses mudah.</p>
-          <button class="primary-btn" type="button" data-page="topup">
-            MULAI BELANJA <span>→</span>
+          <p>Top up game dan layanan gaming favoritmu dengan mudah.</p>
+          <button type="button" class="primary-btn" data-page="topup">
+            MULAI TOP UP <span>→</span>
           </button>
         </div>
-
-        <div class="hero-logo">
-          <img src="LogoL.jpg" alt="LIXERA STORE">
-        </div>
+        <div class="hero-decoration" aria-hidden="true">LX</div>
       </div>
 
-      <!-- Banner beranda -->
+      <!-- Banner utama -->
       <div class="section-heading">
         <div>
           <span class="eyebrow">PROMO & INFORMASI</span>
-          <h2>Banner Pilihan</h2>
+          <h2>Banner Store</h2>
         </div>
       </div>
 
       <div class="banner-slider" id="homeSlider">
         <div class="slide active">
-          <img src="bannerhalaman1.png" alt="Banner LIXERA STORE 1">
+          <img src="bannerhalaman1.png" alt="Banner LIXERA 1"
+               onerror="this.closest('.slide').classList.add('image-missing')">
+          <div class="banner-fallback">
+            <span>LIXERA STORE</span>
+            <strong>TOP UP GAME FAVORITMU</strong>
+            <small>Praktis • Mudah • Aman</small>
+          </div>
         </div>
+
         <div class="slide">
-          <img src="bannerhalaman2.png" alt="Banner LIXERA STORE 2">
+          <img src="bannerhalaman2.png" alt="Banner LIXERA 2"
+               onerror="this.closest('.slide').classList.add('image-missing')">
+          <div class="banner-fallback">
+            <span>LIXERA STORE</span>
+            <strong>LAYANAN GAMING DIGITAL</strong>
+            <small>Satu tempat untuk kebutuhan gaming</small>
+          </div>
         </div>
+
         <div class="slide">
-          <img src="bannerhalaman3.png" alt="Banner LIXERA STORE 3">
-        </div>
-        <div class="slider-dots" id="homeSliderDots">
-          <button class="dot active" data-slide="0" aria-label="Banner 1"></button>
-          <button class="dot" data-slide="1" aria-label="Banner 2"></button>
-          <button class="dot" data-slide="2" aria-label="Banner 3"></button>
+          <img src="bannerhalaman3.png" alt="Banner LIXERA 3"
+               onerror="this.closest('.slide').classList.add('image-missing')">
+          <div class="banner-fallback">
+            <span>LIXERA STORE</span>
+            <strong>READY TO PLAY?</strong>
+            <small>Pilih layanan favoritmu sekarang</small>
+          </div>
         </div>
       </div>
 
-      <!-- Pilihan layanan -->
+      <div class="slider-dots" id="homeSliderDots" aria-label="Pilih banner">
+        <button type="button" class="dot active" aria-label="Banner 1"></button>
+        <button type="button" class="dot" aria-label="Banner 2"></button>
+        <button type="button" class="dot" aria-label="Banner 3"></button>
+      </div>
+
+      <!-- Layanan -->
       <div class="section-heading">
         <div>
-          <span class="eyebrow">PILIH KEBUTUHANMU</span>
-          <h2>Layanan Kami</h2>
+          <span class="eyebrow">PILIH LAYANAN</span>
+          <h2>Mau Cari Apa?</h2>
         </div>
       </div>
 
       <div class="service-grid">
-        <button class="service-card topup-service" type="button" data-page="topup">
-          <div class="service-image">
-            <img src="mobilelegends.png" alt="Layanan Top Up"
-                 onerror="this.style.display='none'">
-            <span class="service-fallback">💎</span>
-          </div>
-          <div class="service-info">
-            <span class="service-tag">ISI DIAMOND & LAINNYA</span>
-            <h3>TOP UP GAME</h3>
-            <p>Pilih game dan nominal favoritmu.</p>
-            <span class="service-link">PILIH LAYANAN →</span>
-          </div>
+        <button type="button" class="service-card" data-page="topup">
+          <span class="service-icon">💎</span>
+          <strong>Top Up Game</strong>
+          <small>Diamond, UC, Token, dan lainnya</small>
+          <span class="service-arrow">→</span>
         </button>
 
-        <button class="service-card joki-service" type="button" data-page="joki">
-          <div class="service-image">
-            <img src="catagoryjokirank.jpg" alt="Layanan Joki"
-                 onerror="this.style.display='none'">
-            <span class="service-fallback">🏆</span>
-          </div>
-          <div class="service-info">
-            <span class="service-tag">PUSH RANK MOBILE LEGENDS</span>
-            <h3>JOKI GAME</h3>
-            <p>Pilih layanan dan target rank kamu.</p>
-            <span class="service-link">PILIH LAYANAN →</span>
-          </div>
+        <button type="button" class="service-card" data-page="joki">
+          <span class="service-icon">⚔️</span>
+          <strong>Joki MLBB</strong>
+          <small>Joki rank dan gendong</small>
+          <span class="service-arrow">→</span>
         </button>
       </div>
 
@@ -114,224 +118,174 @@
           <span class="eyebrow">KOLEKSI GAME</span>
           <h2>Game Populer</h2>
         </div>
-        <button class="text-btn" type="button" data-page="topup">Lihat Semua →</button>
+        <button type="button" class="text-btn" data-page="topup">Lihat Semua →</button>
       </div>
 
       <div class="game-grid" id="homeGames"></div>
 
-      <div class="info-strip">
-        <span class="info-icon">🔒</span>
+      <div class="trust-note">
+        <span>🔒</span>
         <div>
-          <strong>Transaksi Mudah</strong>
-          <p>Pembayaran QRIS dan konfirmasi pesanan melalui WhatsApp.</p>
+          <strong>Transaksi melalui WhatsApp</strong>
+          <p>Pembayaran diperiksa admin sebelum pesanan diproses.</p>
         </div>
       </div>
-
     </section>
-
 
     <!-- ================= TOP UP ================= -->
     <section class="page" id="topup">
-
-      <div class="page-heading">
-        <button class="back-btn" type="button" data-page="home">←</button>
-        <div>
-          <span class="eyebrow">LIXERA DIGITAL</span>
-          <h1>TOP UP GAME</h1>
-          <p>Pilih game dan nominal yang kamu inginkan.</p>
-        </div>
+      <div class="page-intro">
+        <span class="eyebrow">DIGITAL GAME SERVICE</span>
+        <h1>Top Up <span>Game</span></h1>
+        <p>Pilih game, tentukan nominal, lalu isi data akun dengan benar.</p>
       </div>
 
-      <!-- Banner top up -->
       <div class="topup-banner">
-        <img src="bannertopup.jpg" alt="Banner Top Up LIXERA STORE">
-        <div class="banner-caption">
-          <span>TOP UP MUDAH</span>
-          <strong>YOUR GAME, YOUR CHOICE.</strong>
+        <img src="bannertopup.jpg" alt="Banner Top Up LIXERA"
+             onerror="this.style.display='none'">
+        <div class="topup-banner-fallback">
+          <span>LIXERA STORE</span>
+          <strong>TOP UP GAME</strong>
+          <small>Pilih game dan nominal favoritmu</small>
         </div>
       </div>
 
-      <!-- Kategori game -->
       <div class="section-heading">
         <div>
-          <span class="eyebrow">KATEGORI</span>
+          <span class="eyebrow">LANGKAH 01</span>
           <h2>Pilih Game</h2>
         </div>
       </div>
 
       <div class="game-grid" id="topupGames"></div>
 
-      <!-- Katalog -->
-      <div class="catalog-section" id="catalog">
-        <div class="catalog-header">
+      <section class="catalog-section" id="catalog">
+        <div class="section-heading">
           <div>
-            <span class="eyebrow">DAFTAR PRODUK</span>
-            <h2 id="gameTitle">Pilih Game Terlebih Dahulu</h2>
+            <span class="eyebrow">LANGKAH 02</span>
+            <h2 id="gameTitle">Katalog Nominal</h2>
           </div>
-          <button class="text-btn" id="changeGame" type="button" hidden>
+          <button type="button" class="text-btn" id="changeGame" hidden>
             Ganti Game
           </button>
         </div>
 
         <label class="search-box">
           <span>⌕</span>
-          <input type="search" id="search" placeholder="Cari nominal..." autocomplete="off">
+          <input type="search" id="search"
+                 placeholder="Cari nominal..." autocomplete="off">
         </label>
 
         <div class="product-grid" id="products"></div>
 
-        <div class="empty-state" id="empty">
+        <div class="empty-state" id="empty" hidden>
           <span>🎮</span>
-          <h3>Belum Ada Produk</h3>
-          <p>Pilih salah satu game untuk melihat katalog.</p>
+          <h3>Pilih Game Dahulu</h3>
+          <p>Pilih game di atas untuk melihat daftar nominal.</p>
         </div>
-      </div>
+      </section>
 
       <!-- Form top up -->
-      <div class="form-card" id="topupFormCard" hidden>
+      <section class="form-card" id="topupFormCard" hidden>
         <div class="section-heading">
           <div>
-            <span class="eyebrow">DETAIL PESANAN</span>
-            <h2>Data Top Up</h2>
+            <span class="eyebrow">LANGKAH 03</span>
+            <h2>Data Pesanan</h2>
           </div>
+        </div>
+
+        <div class="selected-product">
+          <span>Produk Dipilih</span>
+          <strong id="chosenProduct">—</strong>
+          <strong class="selected-price" id="topupPrice">Rp0</strong>
         </div>
 
         <form id="topupForm">
-          <div class="selected-product">
-            <span>Produk pilihan</span>
-            <strong id="chosenProduct">Belum dipilih</strong>
-          </div>
+          <label for="topupName">Nama Pembeli</label>
+          <input id="topupName" name="name" type="text"
+                 placeholder="Masukkan nama kamu" required maxlength="60">
 
-          <label class="field">
-            <span>Nama pembeli</span>
-            <input type="text" id="topupName" placeholder="Masukkan nama kamu"
-                   maxlength="60" required>
-          </label>
+          <label for="topupWA">Nomor WhatsApp Aktif</label>
+          <input id="topupWA" name="phone" type="tel"
+                 placeholder="Contoh: 08xxxxxxxxxx" required
+                 inputmode="tel" maxlength="20">
 
-          <label class="field">
-            <span>Nomor WhatsApp</span>
-            <input type="tel" id="topupWA" placeholder="Contoh: 08xxxxxxxxxx"
-                   maxlength="20" required>
-          </label>
+          <label for="gameID">User ID Game</label>
+          <input id="gameID" name="gameID" type="text"
+                 placeholder="Masukkan User ID" required maxlength="50">
 
-          <div id="gameInputs">
-            <label class="field">
-              <span>ID Game</span>
-              <input type="text" id="gameID" placeholder="Masukkan ID game"
-                     maxlength="40" required>
-            </label>
+          <label for="gameServer">Server / Zone ID <span>(jika diperlukan)</span></label>
+          <input id="gameServer" name="server" type="text"
+                 placeholder="Masukkan server atau zone ID" maxlength="30">
 
-            <label class="field" id="serverField">
-              <span>ID Server</span>
-              <input type="text" id="gameServer" placeholder="Masukkan server jika diperlukan"
-                     maxlength="30">
-            </label>
+          <label for="nickname">Nickname Game <span>(opsional)</span></label>
+          <input id="nickname" name="nickname" type="text"
+                 placeholder="Nama akun game" maxlength="60">
 
-            <label class="field">
-              <span>Nickname (opsional)</span>
-              <input type="text" id="nickname" placeholder="Nickname dalam game"
-                     maxlength="60">
-            </label>
-          </div>
+          <label for="topupNote">Catatan <span>(opsional)</span></label>
+          <textarea id="topupNote" name="note"
+                    placeholder="Catatan tambahan..." rows="3" maxlength="300"></textarea>
 
-          <label class="field">
-            <span>Catatan (opsional)</span>
-            <textarea id="topupNote" rows="3" placeholder="Catatan tambahan"></textarea>
-          </label>
-
-          <div class="total-row">
-            <span>Total pembayaran</span>
-            <strong id="topupPrice">Rp0</strong>
-          </div>
-
-          <button class="primary-btn full-btn" type="submit">
+          <button type="submit" class="primary-btn full-btn">
             LANJUT KE PEMBAYARAN →
           </button>
         </form>
-      </div>
-
+      </section>
     </section>
-
 
     <!-- ================= JOKI ================= -->
     <section class="page" id="joki">
-
-      <div class="page-heading">
-        <button class="back-btn" type="button" data-page="home">←</button>
-        <div>
-          <span class="eyebrow">LIXERA SERVICE</span>
-          <h1>JOKI MOBILE LEGENDS</h1>
-          <p>Pilih layanan sesuai target rank kamu.</p>
-        </div>
+      <div class="page-intro">
+        <span class="eyebrow">MOBILE LEGENDS: BANG BANG</span>
+        <h1>Joki <span>MLBB</span></h1>
+        <p>Pilih jenis layanan dan hitung estimasi biaya sebelum memesan.</p>
       </div>
 
-      <!-- Banner joki -->
       <div class="topup-banner joki-banner">
-        <img src="catagoryjokirank.jpg" alt="Banner Joki Mobile Legends">
-        <div class="banner-caption">
-          <span>JOKI MOBILE LEGENDS</span>
-          <strong>PUSH RANK BARENG LIXERA</strong>
+        <img src="bannertopup.jpg" alt="Layanan Joki LIXERA"
+             onerror="this.style.display='none'">
+        <div class="topup-banner-fallback">
+          <span>LIXERA STORE</span>
+          <strong>JOKI MOBILE LEGENDS</strong>
+          <small>Rank dan gendong</small>
         </div>
       </div>
 
-      <!-- Kategori joki -->
       <div class="section-heading">
         <div>
-          <span class="eyebrow">KATEGORI JOKI</span>
-          <h2>Pilih Layanan</h2>
+          <span class="eyebrow">PILIH LAYANAN</span>
+          <h2>Jenis Joki</h2>
         </div>
       </div>
 
       <div class="joki-choice-grid" id="jokiChoices">
-
-        <button class="joki-choice" type="button" data-joki="rank">
-          <div class="joki-choice-image">
-            <img src="catagoryjokirank.jpg" alt="Joki Rank"
-                 onerror="this.style.display='none'">
-            <span class="service-fallback">🏆</span>
-          </div>
-          <div class="joki-choice-info">
-            <span class="service-tag">PUSH BINTANG</span>
-            <h3>JOKI RANK</h3>
-            <p>Naikkan rank sesuai target.</p>
-            <span class="service-link">PILIH RANK →</span>
-          </div>
+        <button type="button" class="joki-choice" data-joki="rank">
+          <span class="service-icon">🏆</span>
+          <strong>Joki Rank</strong>
+          <small>Naik rank sesuai target</small>
         </button>
 
-        <button class="joki-choice" type="button" data-joki="gendong">
-          <div class="joki-choice-image">
-            <img src="catagoryjokigendong.jpg" alt="Joki Gendong"
-                 onerror="this.style.display='none'">
-            <span class="service-fallback">⚔️</span>
-          </div>
-          <div class="joki-choice-info">
-            <span class="service-tag">MAIN BARENG</span>
-            <h3>JOKI GENDONG</h3>
-            <p>Temani push rank bersama joki.</p>
-            <span class="service-link">PILIH LAYANAN →</span>
-          </div>
+        <button type="button" class="joki-choice" data-joki="gendong">
+          <span class="service-icon">⚡</span>
+          <strong>Joki Gendong</strong>
+          <small>Pesan jumlah bintang</small>
         </button>
-
       </div>
 
-      <!-- Form joki rank -->
-      <div class="joki-detail" id="jokiDetail" hidden>
-
-        <div class="catalog-header">
+      <section class="form-card" id="jokiDetail" hidden>
+        <div class="section-heading">
           <div>
-            <span class="eyebrow">PENGATURAN LAYANAN</span>
-            <h2 id="jokiTitle">JOKI RANK</h2>
+            <span class="eyebrow">DETAIL LAYANAN</span>
+            <h2 id="jokiTitle">Joki Rank</h2>
           </div>
-          <button class="text-btn" id="changeJoki" type="button">Ganti Layanan</button>
+          <button type="button" class="text-btn" id="changeJoki">Ganti</button>
         </div>
 
-        <div class="form-card">
-          <form id="rankForm">
-
-            <h3>Rank Saat Ini</h3>
-
-            <label class="field">
-              <span>Pangkat awal</span>
+        <!-- Form joki rank -->
+        <form id="rankForm" hidden>
+          <div class="form-row">
+            <div>
+              <label for="rankFrom">Rank Saat Ini</label>
               <select id="rankFrom" required>
                 <option value="GM">Grandmaster</option>
                 <option value="Epic">Epic</option>
@@ -341,10 +295,10 @@
                 <option value="Glory">Mythical Glory</option>
                 <option value="Immortal">Mythical Immortal</option>
               </select>
-            </label>
+            </div>
 
-            <label class="field" id="fromDivisionField">
-              <span>Divisi awal</span>
+            <div id="fromDivisionField">
+              <label for="fromDivision">Divisi Saat Ini</label>
               <select id="fromDivision">
                 <option value="V">V</option>
                 <option value="IV">IV</option>
@@ -352,20 +306,16 @@
                 <option value="II">II</option>
                 <option value="I">I</option>
               </select>
-            </label>
+            </div>
+          </div>
 
-            <label class="field">
-              <span>Bintang saat ini</span>
-              <input type="number" id="fromStars" min="0" max="1000" value="0" required>
-              <small class="field-hint" id="fromStarsHint">Sesuaikan dengan pangkat awal.</small>
-            </label>
+          <label for="fromStars">Bintang Saat Ini</label>
+          <input id="fromStars" type="number" min="0" max="5" value="0" required>
+          <small class="field-hint" id="fromStarsHint">Masukkan bintang saat ini.</small>
 
-            <hr>
-
-            <h3>Target Rank</h3>
-
-            <label class="field">
-              <span>Pangkat tujuan</span>
+          <div class="form-row">
+            <div>
+              <label for="rankTo">Rank Tujuan</label>
               <select id="rankTo" required>
                 <option value="GM">Grandmaster</option>
                 <option value="Epic">Epic</option>
@@ -375,215 +325,166 @@
                 <option value="Glory">Mythical Glory</option>
                 <option value="Immortal">Mythical Immortal</option>
               </select>
-            </label>
+            </div>
 
-            <label class="field" id="toDivisionField">
-              <span>Divisi tujuan</span>
+            <div id="toDivisionField" hidden>
+              <label for="toDivision">Divisi Tujuan</label>
               <select id="toDivision">
                 <option value="V">V</option>
                 <option value="IV">IV</option>
                 <option value="III">III</option>
                 <option value="II">II</option>
-                <option value="I" selected>I</option>
+                <option value="I">I</option>
               </select>
-            </label>
-
-            <label class="field">
-              <span>Bintang tujuan</span>
-              <input type="number" id="toStars" min="0" max="1000" value="25" required>
-              <small class="field-hint" id="toStarsHint">Masukkan jumlah bintang target.</small>
-            </label>
-
-            <div class="joki-summary">
-              <div>
-                <span>Estimasi bintang yang dilewati</span>
-                <strong id="jokiStarCount">0 bintang</strong>
-              </div>
-              <div>
-                <span>Estimasi biaya</span>
-                <strong id="jokiTotal">Rp0</strong>
-              </div>
-              <p id="jokiBreakdown">Pilih rank awal dan tujuan untuk menghitung biaya.</p>
             </div>
+          </div>
 
-            <label class="field">
-              <span>Nama pembeli</span>
-              <input type="text" id="jokiName" placeholder="Nama kamu" maxlength="60" required>
-            </label>
+          <label for="toStars">Bintang Tujuan</label>
+          <input id="toStars" type="number" min="0" max="24" value="0" required>
+          <small class="field-hint" id="toStarsHint">Masukkan target bintang.</small>
 
-            <label class="field">
-              <span>Nomor WhatsApp</span>
-              <input type="tel" id="jokiWA" placeholder="08xxxxxxxxxx" maxlength="20" required>
-            </label>
+          <div class="price-summary">
+            <div><span>Estimasi perjalanan</span><strong id="jokiStarCount">—</strong></div>
+            <div><span>Total estimasi</span><strong id="jokiTotal">Rp0</strong></div>
+            <pre id="jokiBreakdown">Pilih rank dan bintang untuk menghitung harga.</pre>
+          </div>
 
-            <label class="field">
-              <span>Catatan (opsional)</span>
-              <textarea id="jokiNote" rows="3" placeholder="Catatan untuk joki"></textarea>
-            </label>
+          <label for="jokiName">Nama Pembeli</label>
+          <input id="jokiName" type="text" placeholder="Nama kamu" required maxlength="60">
 
-            <button class="primary-btn full-btn" type="submit">
-              LANJUT KE PEMBAYARAN →
-            </button>
-          </form>
+          <label for="jokiWA">Nomor WhatsApp</label>
+          <input id="jokiWA" type="tel" placeholder="08xxxxxxxxxx"
+                 inputmode="tel" required maxlength="20">
 
-          <form id="gendongForm" hidden>
-            <h3>Pengaturan Joki Gendong</h3>
+          <label for="jokiNote">Catatan <span>(opsional)</span></label>
+          <textarea id="jokiNote" rows="3" placeholder="Catatan untuk admin..." maxlength="300"></textarea>
 
-            <label class="field">
-              <span>Rank saat ini</span>
-              <select id="gendongRank">
-                <option value="GM">Grandmaster</option>
-                <option value="Epic">Epic</option>
-                <option value="Legend">Legend</option>
-                <option value="Mythic">Mythic</option>
-                <option value="Honor">Mythical Honor</option>
-                <option value="Glory">Mythical Glory</option>
-                <option value="Immortal">Mythical Immortal</option>
-              </select>
-            </label>
+          <button type="submit" class="primary-btn full-btn">PESAN JOKI RANK →</button>
+        </form>
 
-            <label class="field">
-              <span>Jumlah bintang yang ingin dinaikkan</span>
-              <input type="number" id="gendongStars" min="1" max="1000" value="1" required>
-            </label>
+        <!-- Form joki gendong -->
+        <form id="gendongForm" hidden>
+          <label for="gendongRank">Rank Awal</label>
+          <select id="gendongRank" required>
+            <option value="GM">Grandmaster</option>
+            <option value="Epic">Epic</option>
+            <option value="Legend">Legend</option>
+            <option value="Mythic">Mythic</option>
+            <option value="Honor">Mythical Honor</option>
+            <option value="Glory">Mythical Glory</option>
+            <option value="Immortal">Mythical Immortal</option>
+          </select>
 
-            <div class="total-row">
-              <span>Estimasi biaya</span>
-              <strong id="gendongTotal">Rp0</strong>
-            </div>
+          <label for="gendongStars">Jumlah Bintang yang Dipesan</label>
+          <input id="gendongStars" type="number" min="1" max="1000"
+                 value="1" required>
+          <small class="field-hint">Harga dihitung bertingkat jika melewati rentang rank.</small>
 
-            <label class="field">
-              <span>Nama pembeli</span>
-              <input type="text" id="gendongName" maxlength="60" required>
-            </label>
+          <div class="price-summary">
+            <div><span>Jumlah bintang</span><strong id="gendongCount">1 bintang</strong></div>
+            <div><span>Total estimasi</span><strong id="gendongTotal">Rp0</strong></div>
+          </div>
 
-            <label class="field">
-              <span>Nomor WhatsApp</span>
-              <input type="tel" id="gendongWA" maxlength="20" required>
-            </label>
+          <label for="gendongName">Nama Pembeli</label>
+          <input id="gendongName" type="text" placeholder="Nama kamu" required maxlength="60">
 
-            <label class="field">
-              <span>Catatan (opsional)</span>
-              <textarea id="gendongNote" rows="3"></textarea>
-            </label>
+          <label for="gendongWA">Nomor WhatsApp</label>
+          <input id="gendongWA" type="tel" placeholder="08xxxxxxxxxx"
+                 inputmode="tel" required maxlength="20">
 
-            <button class="primary-btn full-btn" type="submit">
-              LANJUT KE PEMBAYARAN →
-            </button>
-          </form>
-        </div>
+          <label for="gendongNote">Catatan <span>(opsional)</span></label>
+          <textarea id="gendongNote" rows="3" placeholder="Catatan untuk admin..." maxlength="300"></textarea>
+
+          <button type="submit" class="primary-btn full-btn">PESAN JOKI GENDONG →</button>
+        </form>
+      </section>
+
+      <div class="price-note">
+        <strong>ℹ️ Informasi layanan</strong>
+        <p>Harga yang tampil merupakan estimasi berdasarkan pilihan rank dan bintang. Konfirmasikan detail akun dan pesanan kepada admin sebelum layanan dimulai.</p>
       </div>
-
     </section>
-
 
     <!-- ================= PESANAN ================= -->
     <section class="page" id="orders">
-
-      <div class="page-heading">
-        <div>
-          <span class="eyebrow">RIWAYAT TRANSAKSI</span>
-          <h1>Pesanan Saya</h1>
-          <p>Lihat ringkasan pesanan yang dibuat di perangkat ini.</p>
-        </div>
+      <div class="page-intro">
+        <span class="eyebrow">ORDER CENTER</span>
+        <h1>Pesanan <span>Saya</span></h1>
+        <p>Periksa pesanan yang tersimpan di perangkat ini.</p>
       </div>
 
-      <div class="orders-list" id="ordersList">
-        <div class="empty-state">
-          <span>📦</span>
-          <h3>Belum Ada Pesanan</h3>
-          <p>Pesanan kamu akan muncul di halaman ini.</p>
-          <button class="primary-btn" type="button" data-page="topup">
-            MULAI BELANJA
-          </button>
-        </div>
-      </div>
+      <div id="ordersList"></div>
 
+      <div class="order-disclaimer">
+        Riwayat disimpan secara lokal di browser perangkat ini. Status pembayaran tidak diperbarui otomatis; konfirmasi kepada admin melalui WhatsApp.
+      </div>
     </section>
-
   </main>
-
 
   <!-- ================= NAVIGASI BAWAH ================= -->
   <nav class="bottom-nav" aria-label="Navigasi utama">
-    <button class="nav-item active" type="button" data-page="home">
-      <span class="nav-icon">⌂</span>
-      <span>Beranda</span>
+    <button type="button" class="nav-item active" data-page="home">
+      <span>⌂</span><small>Home</small>
     </button>
-    <button class="nav-item" type="button" data-page="topup">
-      <span class="nav-icon">💎</span>
-      <span>Top Up</span>
+    <button type="button" class="nav-item" data-page="topup">
+      <span>💎</span><small>Top Up</small>
     </button>
-    <button class="nav-item" type="button" data-page="joki">
-      <span class="nav-icon">🏆</span>
-      <span>Joki</span>
+    <button type="button" class="nav-item" data-page="joki">
+      <span>⚔️</span><small>Joki</small>
     </button>
-    <button class="nav-item" type="button" data-page="orders">
-      <span class="nav-icon">▤</span>
-      <span>Pesanan</span>
+    <button type="button" class="nav-item" data-page="orders">
+      <span>📦</span><small>Pesanan</small>
     </button>
   </nav>
 
-
   <!-- ================= MODAL PEMBAYARAN ================= -->
-  <div class="modal-overlay" id="paymentModal" hidden>
-    <div class="payment-modal" role="dialog" aria-modal="true"
-         aria-labelledby="paymentTitle">
+  <div class="modal-backdrop" id="paymentModal" hidden>
+    <section class="payment-modal" role="dialog" aria-modal="true"
+             aria-labelledby="paymentTitle">
+      <button type="button" class="modal-close" id="closeModal"
+              aria-label="Tutup pembayaran">×</button>
 
-      <div class="modal-header">
-        <div>
-          <span class="eyebrow">LANGKAH TERAKHIR</span>
-          <h2 id="paymentTitle">Pembayaran QRIS</h2>
-        </div>
-        <button class="icon-btn" id="closeModal" type="button" aria-label="Tutup">✕</button>
-      </div>
+      <span class="eyebrow">LANGKAH TERAKHIR</span>
+      <h2 id="paymentTitle">Pembayaran QRIS</h2>
+      <p class="modal-description">Selesaikan pembayaran sesuai nominal berikut, lalu konfirmasi ke admin.</p>
 
-      <div class="payment-product">
+      <div class="payment-summary">
         <span>Produk</span>
-        <strong id="paymentProduct">-</strong>
-      </div>
-
-      <div class="payment-price">
+        <strong id="paymentProduct">—</strong>
         <span>Total pembayaran</span>
-        <strong id="paymentPrice">Rp0</strong>
+        <strong class="payment-total" id="paymentPrice">Rp0</strong>
       </div>
 
-      <div class="qris-box">
-        <img src="qrislixera.png" alt="QRIS LIXERA STORE">
-        <p>Scan QRIS menggunakan aplikasi pembayaran yang mendukung QRIS.</p>
+      <div class="qris-container">
+        <img src="qrislixera.png" alt="QRIS LIXERA STORE"
+             onerror="this.style.display='none'; this.nextElementSibling.hidden=false">
+        <div class="qris-fallback" hidden>
+          <span>QRIS LIXERA</span>
+          <p>File qrislixera.png belum ditemukan. Tambahkan gambar QRIS ke folder website.</p>
+        </div>
       </div>
 
-      <div class="payment-warning">
-        <strong>⚠️ Perhatian</strong>
-        <p>Pastikan nominal pembayaran sesuai. Admin akan memeriksa pembayaran secara manual.</p>
-      </div>
+      <p class="payment-warning">Pastikan nama merchant dan nominal sesuai sebelum membayar. Jangan mengirim PIN atau OTP kepada siapa pun.</p>
 
       <label class="paid-check">
         <input type="checkbox" id="paidCheck">
-        <span>Saya sudah melakukan pembayaran dan siap mengirim konfirmasi pesanan.</span>
+        <span>Saya sudah melakukan pembayaran dan siap mengirim konfirmasi. Saya memahami admin tetap perlu memverifikasi pembayaran.</span>
       </label>
 
-      <button class="primary-btn full-btn" id="confirmWA" type="button" disabled>
-        KONFIRMASI VIA WHATSAPP
+      <button type="button" class="primary-btn full-btn" id="confirmWA" disabled>
+        KONFIRMASI VIA WHATSAPP →
       </button>
 
-      <button class="secondary-btn full-btn" id="cancelPayment" type="button">
+      <button type="button" class="secondary-btn full-btn" id="cancelPayment">
         BATAL
       </button>
-
-    </div>
+    </section>
   </div>
 
-
-  <!-- NOTIFIKASI -->
+  <!-- Toast pemberitahuan -->
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <footer class="footer">
-    <img src="LogoL.jpg" alt="" class="footer-logo">
-    <p>© 2026 LIXERA STORE. All rights reserved.</p>
-    <small>Top Up Game • Joki Game • Layanan Digital</small>
-  </footer>
-
+  <!-- Script dimuat paling akhir agar elemen HTML tersedia -->
   <script src="script.js"></script>
 </body>
-                                              </html>
+            </html>
