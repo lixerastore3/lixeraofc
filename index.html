@@ -1,243 +1,181 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#080d1b">
-  <title>LIXERA STORE</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080d1b">
+<title>LIXERA STORE</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header class="top-header">
-  <a href="#home" class="brand" data-page="home">
-    <img src="LogoL.jpg" alt="LIXERA" class="brand-logo">
-    <div class="brand-text">
-      <strong>LIXERA</strong>
-      <span>DIGITAL GAMING STORE</span>
-    </div>
+<header class="header">
+  <a class="brand" href="#" data-page="home">
+    <img src="LogoL.jpg" alt="L" onerror="this.style.display='none'">
+    <span><b>LIXERA</b><small>DIGITAL GAMING STORE</small></span>
   </a>
-  <button class="header-order-btn" data-page="orders">Pesanan</button>
+  <button data-page="orders">Pesanan</button>
 </header>
 
-<main id="app">
+<main>
+<section class="page active" id="home">
+  <div class="hero">
+    <small>WELCOME TO</small>
+    <h1>LIXERA <span>STORE</span></h1>
+    <p>Top Up Game & Digital Services</p>
+  </div>
 
-  <section class="page active" id="page-home" data-page-section="home">
-    <div class="hero-heading">
-      <span class="eyebrow">WELCOME TO</span>
-      <h1>LIXERA <span>STORE</span></h1>
-      <p>Top Up Game & Digital Services</p>
-    </div>
+  <div class="slider">
+    <img class="slide active" src="bannerhalaman1.png" alt="Banner 1">
+    <img class="slide" src="bannerhalaman2.png" alt="Banner 2">
+    <img class="slide" src="bannerhalaman3.png" alt="Banner 3">
+  </div>
 
-    <div class="banner-slider" id="homeSlider">
-      <div class="slides">
-        <img src="bannerhalaman1.png" class="slide active" alt="Banner 1">
-        <img src="bannerhalaman2.png" class="slide" alt="Banner 2">
-        <img src="bannerhalaman3.png" class="slide" alt="Banner 3">
-      </div>
-      <button class="slider-arrow prev" id="prevSlide">‹</button>
-      <button class="slider-arrow next" id="nextSlide">›</button>
-      <div class="slider-dots" id="sliderDots">
-        <button class="slider-dot active" data-slide="0"></button>
-        <button class="slider-dot" data-slide="1"></button>
-        <button class="slider-dot" data-slide="2"></button>
-      </div>
-    </div>
+  <h2>Pilih Layanan</h2>
+  <div class="service-grid">
+    <button data-page="topup">🎮<b>Top Up Game</b><small>Diamond, UC, Token</small></button>
+    <button data-page="joki">⚔️<b>Joki Mobile Legends</b><small>Joki Rank & Gendong</small></button>
+  </div>
 
-    <div class="section-heading"><h2>Pilih Layanan</h2></div>
-    <div class="quick-menu">
-      <button class="quick-card" data-page="topup">
-        <span class="quick-icon">🎮</span>
-        <span class="quick-title">Top Up Game</span>
-        <span class="quick-desc">Diamond, UC, Token, dan lainnya</span>
-      </button>
-      <button class="quick-card" data-page="joki">
-        <span class="quick-icon">⚔️</span>
-        <span class="quick-title">Joki Mobile Legends</span>
-        <span class="quick-desc">Joki Rank dan Gendong</span>
-      </button>
-    </div>
+  <h2>Kategori Game</h2>
+  <div class="game-grid" id="homeGames"></div>
+</section>
 
-    <div class="section-heading"><h2>Kategori Game</h2></div>
-    <div class="game-grid" id="homeGameGrid"></div>
-  </section>
+<section class="page" id="topup">
+  <button class="back" data-page="home">← Kembali</button>
+  <h1>TOP UP <span>GAME</span></h1>
+  <img class="wide-banner" src="bannertopup.jpg" alt="Top Up LIXERA">
 
-  <section class="page" id="page-topup" data-page-section="topup">
-    <div class="page-heading">
-      <button class="back-button" data-page="home">‹ Kembali</button>
-      <h1>TOP UP <span>GAME</span></h1>
-      <p>Pilih game dan nominal yang kamu inginkan.</p>
-    </div>
+  <div class="game-grid" id="topupGames"></div>
 
-    <div class="topup-banner">
-      <img src="bannertopup.jpg" alt="LIXERA Top Up">
-    </div>
+  <div id="catalog" hidden>
+    <button class="back" id="changeGame">← Ganti Game</button>
+    <h2 id="gameTitle"></h2>
+    <input id="search" placeholder="Cari nominal...">
+    <div class="product-grid" id="products"></div>
+    <p id="empty" hidden>Produk tidak ditemukan.</p>
+  </div>
 
-    <div class="game-grid" id="topupGameGrid"></div>
+  <form class="form-card" id="topupForm" hidden>
+    <h2>Detail Pesanan</h2>
+    <p id="chosenProduct"></p>
+    <input id="topupName" placeholder="Nama pemesan" required>
+    <input id="topupWA" placeholder="Nomor WhatsApp" type="tel" required>
+    <div id="gameInputs"></div>
+    <input id="nickname" placeholder="Nickname dalam game" required>
+    <textarea id="topupNote" placeholder="Catatan (opsional)"></textarea>
+    <h3 id="topupPrice"></h3>
+    <button class="primary" type="submit">Lanjut Pembayaran</button>
+  </form>
+</section>
 
-    <div class="catalog-section" id="topupCatalog" hidden>
-      <button class="back-button" id="changeGame">‹ Ganti Game</button>
-      <div class="selected-game-info">
-        <img id="selectedGameImage" src="" alt="">
-        <h2 id="selectedGameTitle"></h2>
-      </div>
-      <div class="product-filters" id="productFilters"></div>
-      <input class="search-box" id="productSearch"
-        placeholder="Cari produk atau nominal...">
-      <div class="product-grid" id="topupProducts"></div>
-      <p id="noProducts" hidden>Produk tidak ditemukan.</p>
-    </div>
+<section class="page" id="joki">
+  <button class="back" data-page="home">← Kembali</button>
+  <h1>JOKI <span>MOBILE LEGENDS</span></h1>
 
-    <div class="form-card" id="topupOrderCard" hidden>
-      <h2>Detail Pesanan</h2>
-      <div class="selected-product-summary">
-        <strong id="selectedProductLabel">Pilih produk</strong>
-        <strong id="topupTotal">Rp0</strong>
-      </div>
-      <form id="topupForm">
-        <input type="hidden" id="selectedGameKey">
-        <input type="hidden" id="selectedProductId">
-        <input type="hidden" id="selectedProductPrice">
-        <div class="form-group">
-          <label for="topupName">Nama pemesan</label>
-          <input id="topupName" required maxlength="60">
-        </div>
-        <div class="form-group">
-          <label for="topupWhatsapp">Nomor WhatsApp</label>
-          <input id="topupWhatsapp" type="tel" required>
-        </div>
-        <div id="gameFields"></div>
-        <div class="form-group">
-          <label for="topupNote">Catatan (opsional)</label>
-          <textarea id="topupNote"></textarea>
-        </div>
-        <div class="order-total">
-          <span>Total</span><strong id="topupGrandTotal">Rp0</strong>
-        </div>
-        <button class="primary-button" type="submit">Lanjut Pembayaran ›</button>
-      </form>
-    </div>
-  </section>
+  <div id="jokiChoices" class="service-grid">
+    <button data-joki="rank">⚔️<b>Joki Rank</b><small>Push rank sesuai target</small></button>
+    <button data-joki="gendong">🏆<b>Joki Gendong</b><small>Pilih rank dan bintang</small></button>
+  </div>
 
-  <section class="page" id="page-joki" data-page-section="joki">
-    <div class="page-heading">
-      <h1>JOKI <span>GAME</span></h1>
-      <p>Layanan Joki Mobile Legends.</p>
-    </div>
-    <div class="joki-category-grid" id="jokiCategories">
-      <button class="joki-category-card" data-joki="rank">
-        <img src="catagoryjokirank.jpg" alt="Joki Rank">
-        <div class="joki-category-content"><h2>Joki Rank</h2><p>Push rank sesuai target.</p></div>
-      </button>
-      <button class="joki-category-card" data-joki="gendong">
-        <img src="catagoryjokigendong.jpg" alt="Joki Gendong">
-        <div class="joki-category-content"><h2>Joki Gendong</h2><p>Pesan layanan gendong.</p></div>
-      </button>
-    </div>
+  <div id="jokiDetail" hidden>
+    <button class="back" id="changeJoki">← Pilih Layanan Lain</button>
+    <h2 id="jokiTitle"></h2>
 
-    <div class="joki-detail" id="jokiDetail" hidden>
-      <button class="back-button" id="changeJoki">‹ Pilih layanan lain</button>
-      <img id="jokiBannerImage" alt="Banner Joki">
-      <h2 id="jokiServiceTitle"></h2>
+    <form class="form-card" id="rankForm" hidden>
+      <input id="rankName" placeholder="Nama pemesan" required>
+      <input id="rankWA" placeholder="Nomor WhatsApp" type="tel" required>
 
-      <form id="jokiForm" hidden>
-        <div class="form-group"><label>Nama</label><input id="jokiName" required></div>
-        <div class="form-group"><label>WhatsApp</label><input id="jokiWhatsapp" type="tel" required></div>
-        <div class="form-group"><label>Rank awal</label>
-          <select id="startRank">
-            <option value="grandmaster">Grandmaster</option>
-            <option value="epic">Epic</option><option value="legend">Legend</option>
-            <option value="mythic">Mythic</option><option value="honor">Honor</option>
-            <option value="glory">Glory</option><option value="immortal">Immortal</option>
-          </select>
-        </div>
-        <div class="form-group" id="startTierGroup"><label>Tier awal</label>
-          <select id="startTier"><option value="5">V</option><option value="4">IV</option><option value="3">III</option><option value="2">II</option><option value="1">I</option></select>
-        </div>
-        <div class="form-group"><label>Bintang awal</label><input id="startStars" type="number" min="0" max="4" value="0"></div>
-        <div class="form-group"><label>Rank tujuan</label>
-          <select id="endRank">
-            <option value="grandmaster">Grandmaster</option>
-            <option value="epic">Epic</option><option value="legend">Legend</option>
-            <option value="mythic" selected>Mythic</option><option value="honor">Honor</option>
-            <option value="glory">Glory</option><option value="immortal">Immortal</option>
-          </select>
-        </div>
-        <div class="form-group" id="endTierGroup"><label>Tier tujuan</label>
-          <select id="endTier"><option value="5">V</option><option value="4">IV</option><option value="3">III</option><option value="2">II</option><option value="1">I</option></select>
-        </div>
-        <div class="form-group"><label>Bintang tujuan</label><input id="endStars" type="number" min="0" max="4" value="0"></div>
-        <div class="form-group"><label>Catatan</label><textarea id="jokiRequest"></textarea></div>
-        <div class="order-total"><span>Estimasi</span><strong id="jokiTotal">Rp0</strong></div>
-        <p id="jokiPriceNote"></p>
-        <button class="primary-button" type="submit">Lanjut Pembayaran ›</button>
-      </form>
+      <label>Rank awal</label>
+      <select id="rankStart">
+        <option value="grandmaster">Grandmaster</option>
+        <option value="epic">Epic</option>
+        <option value="legend">Legend</option>
+        <option value="mythic">Mythic</option>
+        <option value="honor">Honor</option>
+        <option value="glory">Glory</option>
+        <option value="immortal">Immortal</option>
+      </select>
 
-      <form id="jokiGendongForm" hidden>
-        <div class="form-group"><label>Nama</label><input id="gendongName" required></div>
-        <div class="form-group"><label>WhatsApp</label><input id="gendongWhatsapp" type="tel" required></div>
-        <div class="form-group"><label>ID Mobile Legends</label><input id="mlId" required></div>
-        <div class="form-group"><label>Nickname</label><input id="mlNick" required></div>
-        <div class="form-group"><label>Target rank</label>
-          <select id="gendongRank">
-            <option value="grandmaster">Grandmaster</option><option value="epic">Epic</option>
-            <option value="legend">Legend</option><option value="mythic">Mythic</option>
-            <option value="honor">Honor</option><option value="glory">Glory</option>
-            <option value="immortal">Immortal</option>
-          </select>
-        </div>
-        <div class="form-group"><label>Jumlah bintang</label><input id="gendongStars" type="number" min="1" value="1" required></div>
-        <div class="form-group"><label>Catatan</label><textarea id="gendongNote"></textarea></div>
-        <div class="order-total"><span>Estimasi</span><strong id="gendongTotal">Rp0</strong></div>
-        <button class="primary-button" type="submit">Lanjut Pembayaran ›</button>
-      </form>
-    </div>
-  </section>
+      <label>Bintang awal</label>
+      <input id="starsStart" type="number" min="0" value="0" required>
 
-  <section class="page" id="page-orders" data-page-section="orders">
-    <div class="page-heading">
-      <h1>INFO <span>PESANAN</span></h1>
-      <p>Pembayaran diperiksa manual oleh admin.</p>
-    </div>
-    <button class="primary-button" data-page="topup">Mulai Top Up ›</button>
-    <button class="secondary-button" data-page="joki">Pesan Joki ›</button>
-  </section>
+      <label>Rank tujuan</label>
+      <select id="rankEnd">
+        <option value="grandmaster">Grandmaster</option>
+        <option value="epic">Epic</option>
+        <option value="legend">Legend</option>
+        <option value="mythic" selected>Mythic</option>
+        <option value="honor">Honor</option>
+        <option value="glory">Glory</option>
+        <option value="immortal">Immortal</option>
+      </select>
 
+      <label>Bintang tujuan</label>
+      <input id="starsEnd" type="number" min="0" value="0" required>
+      <textarea id="rankNote" placeholder="Catatan"></textarea>
+      <h3 id="rankPrice">Estimasi: Rp0</h3>
+      <button class="primary" type="submit">Lanjut Pembayaran</button>
+    </form>
+
+    <form class="form-card" id="gendongForm" hidden>
+      <input id="gendongName" placeholder="Nama pemesan" required>
+      <input id="gendongWA" placeholder="Nomor WhatsApp" type="tel" required>
+      <input id="mlID" placeholder="ID Mobile Legends" required>
+      <input id="mlNickname" placeholder="Nickname game" required>
+
+      <label>Target rank</label>
+      <select id="gendongRank">
+        <option value="grandmaster">Grandmaster</option>
+        <option value="epic">Epic</option>
+        <option value="legend">Legend</option>
+        <option value="mythic">Mythic</option>
+        <option value="honor">Honor</option>
+        <option value="glory">Glory</option>
+        <option value="immortal">Immortal</option>
+      </select>
+
+      <label>Jumlah bintang</label>
+      <input id="gendongStars" type="number" min="1" value="1" required>
+      <textarea id="gendongNote" placeholder="Catatan"></textarea>
+      <h3 id="gendongPrice">Estimasi: Rp0</h3>
+      <button class="primary" type="submit">Lanjut Pembayaran</button>
+    </form>
+  </div>
+</section>
+
+<section class="page" id="orders">
+  <h1>INFO <span>PESANAN</span></h1>
+  <p>Pembayaran akan diperiksa manual oleh admin.</p>
+  <button class="primary" data-page="topup">Mulai Top Up</button>
+  <button class="secondary" data-page="joki">Pesan Joki</button>
+</section>
 </main>
 
-<nav class="bottom-nav" id="bottomNav">
-  <button class="nav-item active" data-page="home"><span class="nav-icon">⌂</span>Home</button>
-  <button class="nav-item" data-page="topup"><span class="nav-icon">🎮</span>Top Up</button>
-  <button class="nav-item" data-page="joki"><span class="nav-icon">⚔</span>Joki</button>
-  <button class="nav-item" data-page="orders"><span class="nav-icon">▤</span>Pesanan</button>
+<nav class="bottom-nav">
+  <button class="nav-item active" data-page="home">⌂<small>Home</small></button>
+  <button class="nav-item" data-page="topup">🎮<small>Top Up</small></button>
+  <button class="nav-item" data-page="joki">⚔️<small>Joki</small></button>
+  <button class="nav-item" data-page="orders">▤<small>Pesanan</small></button>
 </nav>
 
-<div class="modal-overlay" id="paymentModal" hidden>
-  <div class="payment-modal" role="dialog" aria-modal="true">
-    <div class="modal-header">
-      <h2>Pembayaran</h2>
-      <button id="closePayment" class="modal-close">×</button>
-    </div>
-    <div class="payment-summary">
-      <span>Produk</span><strong id="paymentProduct">-</strong>
-      <span>Total</span><strong id="paymentTotal">Rp0</strong>
-    </div>
-    <div class="qris-section">
-      <h3>Scan QRIS</h3>
-      <div class="qris-frame"><img src="qrislixera.png" alt="QRIS LIXERA"></div>
-      <p>Pastikan nominal pembayaran benar.</p>
-    </div>
-    <label class="paid-confirmation">
+<div class="modal" id="paymentModal" hidden>
+  <div class="modal-box">
+    <button class="close" id="closeModal">×</button>
+    <h2>Pembayaran QRIS</h2>
+    <p id="paymentProduct"></p>
+    <h2 id="paymentPrice">Rp0</h2>
+    <img class="qris" src="qrislixera.png" alt="QRIS LIXERA">
+    <label class="check">
       <input type="checkbox" id="paidCheck">
-      Saya sudah membayar dan siap konfirmasi.
+      Saya sudah membayar.
     </label>
-    <button class="primary-button" id="confirmWhatsApp" disabled>Konfirmasi WhatsApp ›</button>
-    <p class="payment-disclaimer">Pesanan diproses setelah admin memeriksa pembayaran.</p>
+    <button class="primary" id="confirmWA" disabled>Konfirmasi WhatsApp</button>
+    <small>Admin akan memeriksa pembayaran secara manual.</small>
   </div>
 </div>
 
-<div class="toast" id="toast" role="status"></div>
-
+<div id="toast" class="toast"></div>
 <script src="script.js"></script>
 </body>
-                     </html>           
+</html>
